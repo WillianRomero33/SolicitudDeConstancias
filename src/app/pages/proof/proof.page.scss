@@ -1,0 +1,52 @@
+/* General styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f0f0; /* Example background color */
+  }
+  
+  h1, h2, h3 {
+    text-align: center; /* Example text alignment */
+  }
+  
+  /* Specific class styles */
+  .grafico-container {
+    width: 80%; /* Example width */
+    margin: 20px auto; /* Example margins */
+  }
+  
+  .lista-constancias {
+    padding: 20px; /* Example padding */
+    border: 1px solid #ccc; /* Example border */
+  }
+  
+  .ion-list-header {
+    font-weight: bold;
+    text-align: center; /* Example text alignment */
+  }
+  
+  .ion-item {
+    padding: 10px; /* Example padding */
+    border-bottom: 1px solid #eee; /* Example border */
+  }
+  
+  .ion-avatar {
+    width: 50px; /* Example width */
+    height: 50px; /* Example height */
+    border-radius: 50%; /* Example border radius */
+  }
+  
+  .ion-label {
+    flex: 1; /* Example flexbox layout */
+  }
+  
+  .ion-button-group {
+    display: flex; /* Example flexbox layout */
+    justify-content: flex-end; /* Example flexbox alignment */
+  }
+  
+  .ion-button {
+    margin-right: 5px; /* Example margin */
+  }
+  

@@ -1,13 +1,47 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>proof</ion-title>
-  </ion-toolbar>
+<ion-header>
+  <ion-navbar color="primary">
+    <ion-title>Solicitudes de Constancias</ion-title>
+  </ion-navbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">proof</ion-title>
-    </ion-toolbar>
-  </ion-header>
-</ion-content>
+<ion-content>
+  <div class="grafico-container">
+    <canvas baseChart id="grafico-constancias"></canvas>
+  </div>
+
+  <div class="lista-constancias">
+    <ion-list>
+      <ion-list-header>Solicitudes Recientes</ion-list-header>
+      <ion-item *ngFor="let constancia of constancias | slice:0:8">
+        <ion-avatar slot="start">
+          <img [src]="constancia.imagen" alt="Imagen de constancia">
+        </ion-avatar>
+        <ion-label>
+          <h2>{{constancia.nombre}}</h2>
+          <p>{{constancia.fechaSolicitud}}</p>
+        </ion-label>
+       <ion-swipe (ionSwipe)="swipe(constancia)">
+          <ion-button-group slot="end">
+            <ion-button color="success" (click)="enviarCorreo(constancia)">
+              <ion-icon name="mail"></ion-icon>
+            </ion-button>
+            <ion-button color="primary" (click)="editarConstancia(constancia)">
+              <ion-icon name="create"></ion-icon>
+            </ion-button>
+            <ion-button color="danger" (click)="eliminarConstancia(constancia)">
+              <ion-icon name="trash"></ion-icon>
+            </ion-button>
+          </ion-button-group>
+        </ion-swipe>
+      </ion-item>
+    </ion-list>
+
+    <!-- <ion-pagination [page]="currentPage" [pageCount]="totalPages" (ionPageChange)="onPageChange($event)"></ion-pagination> -->
+  </div>
+
+  <ion-fab vertical="bottom" horizontal="end">
+    <ion-fab-button (click)="registrarConstancia()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content> 

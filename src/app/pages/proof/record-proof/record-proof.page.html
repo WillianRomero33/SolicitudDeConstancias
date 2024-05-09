@@ -1,13 +1,29 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>recordProof</ion-title>
+    <!-- slot start, es para ubicar un elemento al inicio -->
+    <ion-buttons slot="start">
+      <!-- defaultHref, lo usamos para enrutar el boton que nos genera ion-back -->
+      <ion-back-button defaultHref="/proof"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Nuevo constancia </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">recordProof</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <ion-row>
+    <ion-col>
+      <ion-card>
+        <ion-card-content>
+          <!-- Usamos el la directiva de ngModel para vincular los datos de los inputs a la funcion saveNewPlace -->
+          <!-- [(ngModel)]=title -->
+          <ion-input type="text" placeholder="nombre del lugar" ></ion-input>
+          <!-- [(ngModel)]=imageURL -->
+          <ion-input type="text" placeholder="link de imagen"></ion-input>
+          <!-- (click)="saveNewPlace(title, imageURL)" -->
+          <ion-button color="secundary" >Agregar Lugar</ion-button>
+        </ion-card-content>  
+      </ion-card>
+    </ion-col>
+  </ion-row>
+
 </ion-content>

@@ -1,5 +1,7 @@
 {
   "name": "SolicitudDeConstancias",
-  "integrations": {},
+  "integrations": {
+    "cordova": {}
+  },
   "type": "angular"
 }
