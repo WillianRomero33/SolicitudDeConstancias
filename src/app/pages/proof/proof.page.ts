@@ -49,8 +49,8 @@ export class ProofPage implements OnInit {
 
   ngOnInit() {
 
-    this.cargarGrafico()
-    this.cargarConstancias();
+    //this.cargarGrafico()
+    //this.cargarConstancias();
   }
 
   cargarGrafico(): void {

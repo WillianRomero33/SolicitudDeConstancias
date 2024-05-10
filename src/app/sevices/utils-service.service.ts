@@ -9,16 +9,16 @@ export class UtilsServiceService {
 
   constructor(
     private http: HttpClient,
-    private httpClient: HttpClientModule,
+    //private httpClient: HttpClientModule,
     private modalCtrl: ModalController
   ) { }
 
   getConstanciasPorMes(): any {
-    return this.http.get('https://api.ejemplo.com/constancias/por-mes'); // URL de la API para datos por mes
+    //return this.http.get('https://api.ejemplo.com/constancias/por-mes'); // URL de la API para datos por mes
   }
 
   getConstancias(page: number, pageSize: number): any {
-    return this.http.get(`https://api.ejemplo.com/constancias?page=${page}&pageSize=${pageSize}`); // URL de la API para paginación
+    //return this.http.get(`https://api.ejemplo.com/constancias?page=${page}&pageSize=${pageSize}`); // URL de la API para paginación
   }
 
   // Agregar métodos para las demás funcionalidades (enviar correo, editar, eliminar, registrar)

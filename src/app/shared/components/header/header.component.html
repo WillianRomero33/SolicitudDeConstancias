@@ -1,3 +1,15 @@
-<p>
-  header works!
-</p>
+<ion-header class="ion-no-border">
+  <ion-toolbar color="tertiary">
+    <ion-buttons slot="start">
+      <ion-back-button *ngIf="backButton" [defaultHref]="backButton"></ion-back-button>
+
+
+    </ion-buttons>
+    <ion-title>
+      <strong>
+        {{title}}
+      </strong>
+      <div class="ion-no-margin">Solicitudes de Constancias</div>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
