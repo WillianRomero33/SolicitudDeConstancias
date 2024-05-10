@@ -5,7 +5,7 @@ import { ModalController, ModalOptions } from '@ionic/angular';
 @Injectable({
   providedIn: 'root'
 })
-export class UtilsServiceService {
+export class UtilsService {
 
   constructor(
     private http: HttpClient,
