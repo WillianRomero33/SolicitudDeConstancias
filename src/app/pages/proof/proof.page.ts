@@ -6,6 +6,7 @@ import { Proof } from 'src/app/models/proof.model';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { count, orderBy } from 'firebase/firestore';
 import { FormControl, FormGroup } from '@angular/forms';
+import { User } from 'src/app/models/user.model';
 
 @Component({
   selector: 'app-proof',
@@ -14,11 +15,14 @@ import { FormControl, FormGroup } from '@angular/forms';
 })
 export class ProofPage implements OnInit {
 
+  user: User
   constructor(
     private utilsSvc: UtilsService,
     private firebaseSvc: FirebaseService,
     private router: Router,
-  ) { }
+  ) { 
+    this.user = this.utilsSvc.getFromLocalStorage('user')
+  }
 
   // FORM DE FILTRO POR MES
   meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
@@ -43,8 +47,8 @@ export class ProofPage implements OnInit {
 
 
   ngOnInit() {
-
   }
+  
   ionViewWillEnter() {
     this.getConstancias()
   }
@@ -149,9 +153,7 @@ export class ProofPage implements OnInit {
         borderWidth: 1
       }]
     }
-
   }
-
 
 
 

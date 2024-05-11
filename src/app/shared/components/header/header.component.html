@@ -2,14 +2,16 @@
   <ion-toolbar color="tertiary">
     <ion-buttons slot="start">
       <ion-back-button *ngIf="backButton" [defaultHref]="backButton"></ion-back-button>
-
-
     </ion-buttons>
     <ion-title>
       <strong>
         {{title}}
       </strong>
-      <div class="ion-no-margin">Solicitudes de Constancias</div>
     </ion-title>
+    <ion-buttons slot="end">
+      <ion-button *ngIf="isMain" (click)="signOut()" color="danger">
+        <ion-icon name="log-out"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
