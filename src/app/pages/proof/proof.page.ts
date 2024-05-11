@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Chart } from 'chart.js/auto';
-import { UtilsServiceService } from 'src/app/sevices/utils-service.service';
+import { UtilsService } from 'src/app/services/utils.service';
 import { Router } from '@angular/router';
-import { Proof } from 'src/app/models/proof.models';
-
-
-
+import { Proof } from 'src/app/models/proof.model';
+import { FirebaseService } from 'src/app/services/firebase.service';
+import { count, orderBy } from 'firebase/firestore';
+import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-proof',
@@ -14,46 +14,58 @@ import { Proof } from 'src/app/models/proof.models';
 })
 export class ProofPage implements OnInit {
 
-    // Propiedades para el gráfico
-    graficoConstancias: any;
-    constanciasData: any = {
-      labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-      datasets: [{
-        label: 'Constancias Activas',
-        data: [],
-        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-        borderColor: 'rgba(54, 162, 235, 1)',
-        borderWidth: 1
-      }, {
-        label: 'Constancias Inactivas',
-        data: [],
-        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-        borderColor: 'rgba(255, 99, 132, 1)',
-        borderWidth: 1
-      }]
+  constructor(
+    private utilsSvc: UtilsService,
+    private firebaseSvc: FirebaseService,
+    private router: Router,
+  ) { }
 
-    };
+  // FORM DE FILTRO POR MES
+  meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+  currentDate = new Date()
+  form = new FormGroup({
+    month: new FormControl('Todos'),
+    year: new FormControl(this.currentDate.getFullYear())
+  });
 
-     // Propiedades para la lista de constancias
-  constancias: any[] = [];
+  // Propiedades para el gráfico
+  label: any = null
+  graficoConstancias: any;
+  constanciasData: any = {};
+  monthCountTrue = []
+  monthCountFalse = []
+
+  // Propiedades para la lista de constancias
+  constancias: Proof[] = [];
   currentPage: number = 1;
   totalPages: number = 1;
   constanciasPerPage: number = 8; // Número de constancias por página
 
 
-
-  constructor(
-    private utilsSvc: UtilsServiceService,
-    private router: Router,
-  ) { }
-
   ngOnInit() {
 
-    //this.cargarGrafico()
-    //this.cargarConstancias();
+  }
+  ionViewWillEnter() {
+    this.getConstancias()
   }
 
-  cargarGrafico(): void {
+  ionViewWillLeave() {
+    this.graficoConstancias.destroy()
+  }
+
+  // OBTIENE EL LABEL ELEGIDO PARA EL GRAFICO
+  getLabel() {
+    if (this.form.value.month == "Todos") {
+      this.label = this.meses
+    } else {
+      this.label = this.form.value.month
+    }
+    console.log(this.label);
+  }
+
+  // RENDERIZAR GRAFICO
+  cargarGrafico() {
+    this.setGraphicData()
     const ctx = document.getElementById('grafico-constancias') as HTMLCanvasElement;
     this.graficoConstancias = new Chart(ctx, {
       type: 'bar', // Tipo de gráfico (bar, line, etc.)
@@ -62,27 +74,94 @@ export class ProofPage implements OnInit {
         scales: {
           y: {
             beginAtZero: true,
-
+            ticks: {
+              precision: 0
+            }
           }
         }
       }
     });
+  }
 
-    // Cargar datos del gráfico desde el servicio (ejemplo)
-    this.utilsSvc.getConstanciasPorMes().subscribe((data: any) => {
-      this.constanciasData.datasets[0].data = data.activas;
-      this.constanciasData.datasets[1].data = data.inactivas;
-      this.graficoConstancias.update(); // Actualizar el gráfico
+  // OBTIENE TODAS LAS CONSTRANCIAS
+  getConstancias() {
+    let path = `proofs`
+    let query = [
+      orderBy('createdAt', 'asc')
+    ]
+
+    let sub = this.firebaseSvc.getCollectionData(path, query).subscribe((data: any) => {
+      this.constancias = data
+      console.log(this.constancias);
+      sub.unsubscribe()
+      this.getLabel()
+      this.cargarGrafico()
     });
   }
 
-  cargarConstancias(): void {
-    this.utilsSvc.getConstancias(this.currentPage, this.constanciasPerPage)
-      .subscribe((data: any) => {
-        this.constancias = data.constancias;
-        this.totalPages = data.totalPages;
-      });
+  // OBTIENE EL MES Y AÑO DE CREATEDAT DE CADA CONSTANCIA
+  getCountByMonth() {
+    const countByMonthTrue = {}
+    const countByMonthFalse = {}
+    for (let month = 0; month < 12; month++) {
+      const monthYear = `${month}-${this.form.value.year}`
+      countByMonthTrue[monthYear] = 0
+      countByMonthFalse[monthYear] = 0
+    }
+
+
+    // OBTENEMOS EL MES Y AÑO DEL ATRIBUTO CREATED AT
+    this.constancias.forEach(constancia => {
+      const createdAt = new Date(constancia.createdAt)
+      const monthYear = `${createdAt.getMonth()}-${createdAt.getFullYear()}`
+      if (constancia.status) {
+        countByMonthTrue[monthYear]++
+        console.log(countByMonthTrue);
+
+      } else {
+        countByMonthFalse[monthYear]++
+        console.log(countByMonthFalse);
+
+      }
+    })
+
+    this.monthCountTrue = Object.values(countByMonthTrue)
+    this.monthCountFalse = Object.values(countByMonthFalse)
+    console.log(this.monthCountTrue);
+    console.log(this.monthCountFalse);
   }
+
+  setGraphicData() {
+    this.getCountByMonth()
+    this.constanciasData = {
+      labels: this.meses,
+      datasets: [{
+        label: 'Constancias Activas',
+        data: this.monthCountTrue,
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1
+      }, {
+        label: 'Constancias Inactivas',
+        data: this.monthCountFalse,
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1
+      }]
+    }
+
+  }
+
+
+
+
+
+
+
+
+
+
+
 
   swipe(constancia: any): void {
     console.log('Swipe event on constancia:', constancia); // Implementar la lógica para mostrar/ocultar botones
@@ -92,28 +171,63 @@ export class ProofPage implements OnInit {
     console.log('Enviar correo a:', constancia.correo); // Implementar la lógica para enviar correo
   }
 
-  editarConstancia(constancia: any): void {
-    console.log('Editar constancia:', constancia.id); // Implementar la lógica para editar constancia
+  editarConstancia(url: string, proof: Proof) {
+    this.utilsSvc.setData(proof as Proof)
+    this.utilsSvc.routerLink(url)
   }
 
-  eliminarConstancia(constancia: any): void {
-    console.log('Eliminar constancia:', constancia.id); // Implementar la lógica para eliminar constancia
+  // -------- ELIMINACION DE UNA CONTANCIA
+  async confirmDeleteProof(proof: Proof) {
+    this.utilsSvc.presentAlert({
+      header: 'Eliminar contancia!',
+      message: '¿Quieres eliminar esta consntacia?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+        }, {
+          text: 'Si, eliminar',
+          handler: () => {
+            this.deleteProof(proof);
+          }
+        }
+      ]
+    })
+  }
+
+  async deleteProof(proof: Proof) {
+    let path = `proofs/${proof.id}`
+
+    const loading = await this.utilsSvc.loading()
+    await loading.present()
+
+    this.firebaseSvc.deleteDocument(path).then(async res => {
+      this.utilsSvc.presentToast({
+        message: "Contancia eliminada exitosamente",
+        duration: 1500,
+        icon: 'checkmark-circle-outline',
+        color: 'success',
+        position: 'middle'
+      })
+    }).catch(error => {
+      console.log(error)
+      this.utilsSvc.presentToast({
+        message: error.message,
+        duration: 2500,
+        icon: 'alert-circle-outline',
+        color: 'danger',
+        position: 'middle'
+      })
+    }).finally(() => {
+      loading.dismiss()
+      this.getConstancias()
+    })
   }
 
   registrarConstancia() {
-  //this.router.navigateByUrl('/src/app/pages/proof');
     this.router.navigateByUrl('/proof/record-proof');
   }
-
-  // onPageChange(event: any): void {
-  //   this.currentPage = event.detail.page;
-  //   this.cargarConstancias();
-  // }
-
-
-
-
 }
-  
 
 

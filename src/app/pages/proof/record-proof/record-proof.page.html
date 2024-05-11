@@ -1,11 +1,9 @@
 <ion-header>
   <ion-toolbar>
-    <!-- slot start, es para ubicar un elemento al inicio -->
     <ion-buttons slot="start">
-      <!-- defaultHref, lo usamos para enrutar el boton que nos genera ion-back -->
       <ion-back-button defaultHref="/proof"></ion-back-button>
     </ion-buttons>
-    <ion-title>Nueva constancia </ion-title>
+    <ion-title>{{proof ? 'Actualizar Constancia' : 'Agregar Constancia'}} </ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -20,116 +18,102 @@
 
 
 <ion-content>
-  <!-- (ngSubmit)="submit()" (keypress.enter)="submit()" -->
-  <form class="ion-padding ion-text-center">
+  <form class="ion-padding ion-text-center" (ngSubmit)="submit()" (keypress.enter)="submit()">
 
-    <!-- =========== Nombre =============== -->
+    <!-- =========== NOMBRE =============== -->
     <app-custom-input autocomplete="name" label-placement="floating" [control]="form.controls.name" type="text"
       label="Nombre Completo">
     </app-custom-input>
 
-    <!-- Validamos conexion de la variable name
-    {{form.value.name}} -->
+    <!-- Validamos conexion de la variable name -->
     <div class="validators" *ngIf="form.controls.name.errors && form.controls.name.touched">
       <div *ngIf="form.controls.name.errors?.['required']">El nombre completo es requerido</div>
       <div *ngIf="form.controls.name.errors?.['minLength']">El nombre de contener al menos 10 caracteres</div>
     </div>
 
     <!-- =========== DUI =============== -->
-    <app-custom-input autocomplete="DUI" label-placement="floating" [control]="form.controls.DUI" type="text"
+    <app-custom-input autocomplete="dui" label-placement="floating" [control]="form.controls.dui" type="text"
       label="DUI">
     </app-custom-input>
 
-    <!-- Validamos conexion de la variable DUI
-          {{form.value.DUI}} -->
-    <div class="validators" *ngIf="form.controls.DUI.errors && form.controls.DUI.touched">
-      <div *ngIf="form.controls.DUI.errors?.['required']">El DUI es requerido</div>
-      <div *ngIf="form.controls.DUI.errors?.['min']">El numero de DUI es invalido</div>
+    <!-- Validamos conexion de la variable DUI -->
+    <div class="validators" *ngIf="form.controls.dui.errors && form.controls.dui.touched">
+      <div *ngIf="form.controls.dui.errors?.['required']">El DUI es requerido</div>
+      <div *ngIf="form.controls.dui.errors?.['min']">El numero de DUI es invalido</div>
     </div>
 
-    <!-- =========== Numero de telefono =============== -->
+    <!-- =========== NUMERO DE TELEFONO =============== -->
     <app-custom-input autocomplete="phone" label-placement="floating" [control]="form.controls.phone" type="number"
       label="Numero de telefono">
     </app-custom-input>
 
-    <!-- Validamos conexion de la variable phone
-    {{form.value.phone}} -->
+    <!-- Validamos conexion de la variable phone -->
     <div class="validators" *ngIf="form.controls.phone.errors && form.controls.phone.touched">
       <div *ngIf="form.controls.phone.errors?.['required']">El numero es requerido</div>
       <div *ngIf="form.controls.phone.errors?.['min']">El numero debe contener al menos 8 caracteres</div>
     </div>
 
-    <!-- =========== Correo =============== -->
+    <!-- =========== EMAIL =============== -->
     <app-custom-input autocomplete="email" label-placement="floating" [control]="form.controls.email" type="text"
       label="Correo">
     </app-custom-input>
 
-    <!-- Validamos conexion de la variable email
-          {{form.value.email}} -->
+    <!-- Validamos conexion de la variable email -->
     <div class="validators" *ngIf="form.controls.email.errors && form.controls.email.touched">
       <div *ngIf="form.controls.email.errors?.['required']">El correo es requerido</div>
       <div *ngIf="form.controls.email.errors?.['email']">El correo ingresado es invalido</div>
     </div>
 
-    <!-- =========== Tipo de constancia =============== -->
+    <!-- =========== TIPO DE CONSTANCIA =============== -->
     <app-custom-input autocomplete="type" label-placement="floating" [control]="form.controls.type" type="text"
       label="Tipo de constancia">
     </app-custom-input>
 
-    <!-- Validamos conexion de la variable type
-    {{form.value.type}} -->
+    <!-- Validamos conexion de la variable type -->
     <div class="validators" *ngIf="form.controls.type.errors && form.controls.type.touched">
       <div *ngIf="form.controls.type.errors?.['required']">El tipo de constancia es requerido</div>
     </div>
 
-    <!-- =========== Descripcion de la constancia =============== -->
+    <!-- =========== DESCRIPCION DE LA CONSTANCIA =============== -->
     <app-custom-input autocomplete="description" label-placement="floating" [control]="form.controls.description"
-      type="text" label="Nombre Completo">
+      type="text" label="Descripcion">
     </app-custom-input>
 
-    <!-- Validamos conexion de la variable description
-          {{form.value.description}} -->
+    <!-- Validamos conexion de la variable description -->
     <div class="validators" *ngIf="form.controls.description.errors && form.controls.description.touched">
       <div *ngIf="form.controls.description.errors?.['required']">Ingrese una descripcion</div>
       <div *ngIf="form.controls.description.errors?.['minLength']">La descripcion de contener al menos 5 caracteres
       </div>
     </div>
 
-
-    <!-- =========== Cantidad de constancias solicitadas =============== -->
+    <!-- =========== CANTIDAD DE CONSTANCIAS SOLICITADAS =============== -->
     <!-- (ionInput)= "setNumberInputs()" -->
     <app-custom-input [control]="form.controls.qty" label-placement="floating" type="number"
       label="Cantidad"></app-custom-input>
 
-    <!-- Validamos conexcion de la variable qty
-    {{form.value.qty}} -->
+    <!-- Validamos conexcion de la variable qty -->
     <div class="validators" *ngIf="form.controls.qty.errors && form.controls.qty.touched">
       <div *ngIf="form.controls.qty.errors?.['required']">La cantidad requerida</div>
       <div *ngIf="form.controls.qty.errors?.['min']">La cantidad minima debe ser 1</div>
     </div>
 
-    <!-- =========== Estatus de la solicitud =============== -->
-    <app-custom-input autocomplete="status" label-placement="floating" [control]="form.controls.status" type="text"
-      label="Estatus">
-    </app-custom-input>
+    <!-- =========== ESTADO DE LA SOLICITUD =============== -->
+    <ion-item>
+      <ion-select [formControl]="form.controls.status" label="Estado" placeholder="Selecciona el estado" interface="popover">
+        <ion-select-option [value]="true">Activo</ion-select-option>
+        <ion-select-option [value]="false">Inactivo</ion-select-option>
+      </ion-select>
+    </ion-item>
 
-    <!-- Validamos conexion de la variable status
-          {{form.value.status}} -->
+    <!-- Validamos conexion de la variable status -->
     <div class="validators" *ngIf="form.controls.status.errors && form.controls.status.touched">
       <div *ngIf="form.controls.status.errors?.['required']">Asigne un estatus valido</div>
     </div>
 
-    <!-- Con esta linea podemos visualizar los datos ingresados en los input y validar la conexcion -->
-    <!-- {{ form.value | json }} -->
 
-
-   
-      <ion-button mode="ios" class="ion-margin" type="submit" [disabled]="form.invalid">
-          {{proof ? 'Actualizar Constancia' : 'Agregar Constancia'}} <ion-icon slot="end" name="checkmark-circle-outline"></ion-icon>
-      </ion-button>
-
-
-
+    <ion-button mode="ios" class="ion-margin" type="submit" [disabled]="form.invalid">
+      {{proof ? 'Actualizar Constancia' : 'Agregar Constancia'}} <ion-icon slot="end"
+        name="checkmark-circle-outline"></ion-icon>
+    </ion-button>
   </form>
-
 </ion-content>
