@@ -1,15 +1,18 @@
-<app-header title="Solicitudes de Constancias"></app-header>
+<app-header title="Solicitudes de Constancias" [isMain]="true"></app-header>
 
 <ion-content>
 
-  <!-- <form [formGroup]="form">
+  <form [formGroup]="form" (ngSubmit)="getLabel()">
     <ion-item class="ion-margin">
-      <ion-select formControlName="month" label="Mes" interface="popover">
-        <ion-select-option (ion-change)="getLabel()" value="Todos">Todos</ion-select-option>
+      <ion-select [formControl]="form.controls.month" label="Mes" interface="popover" (ion-change)="getLabel()">
+        <ion-select-option value="Todos">Todos</ion-select-option>
         <ion-select-option *ngFor="let mes of meses" (ion-change)="getLabel()" [value]="mes">{{mes}}</ion-select-option>
       </ion-select>
     </ion-item>
-  </form> -->
+    <ion-button type="submit" expand="block" shape="round">
+      Filtrar
+    </ion-button>
+  </form>
   
   <div class="grafico-container">
     <canvas baseChart id="grafico-constancias"></canvas>
@@ -19,9 +22,6 @@
     <ion-list>
       <ion-list-header>Solicitudes Recientes</ion-list-header>
       <ion-item *ngFor="let constancia of constancias | slice:0:8">
-        <!-- <ion-avatar slot="start">
-          <img [src]="constancia.imagen" alt="Imagen de constancia">
-        </ion-avatar> -->
         <ion-label>
           <strong>{{constancia.name}}</strong>
           <p>{{constancia.createdAt}}</p>

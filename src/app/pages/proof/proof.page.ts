@@ -43,8 +43,8 @@ export class ProofPage implements OnInit {
 
 
   ngOnInit() {
-
   }
+  
   ionViewWillEnter() {
     this.getConstancias()
   }
@@ -149,9 +149,7 @@ export class ProofPage implements OnInit {
         borderWidth: 1
       }]
     }
-
   }
-
 
 
 

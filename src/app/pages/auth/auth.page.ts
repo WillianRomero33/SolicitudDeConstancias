@@ -1,6 +1,9 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { FormControl, FormGroup } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
+import { User } from 'src/app/models/user.model';
+import { FirebaseService } from 'src/app/services/firebase.service';
+import { UtilsService } from 'src/app/services/utils.service';
 
 @Component({
   selector: 'app-auth',
@@ -8,8 +11,12 @@ import { ToastController } from '@ionic/angular';
   styleUrls: ['auth.page.scss'],
 })
 export class AuthPage {
-  email: string = '';
-  password: string = '';
+
+  form = new FormGroup({
+    email: new FormControl(''),
+    password: new FormControl<string>(''),
+  })
+
   emailTouched: boolean = false;
   passwordTouched: boolean = false;
   invalidEmail: boolean = false;
@@ -18,46 +25,104 @@ export class AuthPage {
   currentUser: { email: string; password: string; role: string } | null = null;
   hidePassword: boolean = true;
 
-  constructor(private router: Router, private toastController: ToastController) {}
+  constructor(
+    private toastController: ToastController,
+    private firebaseSvc: FirebaseService,
+    private utilsSvc: UtilsService,
+  ) { }
 
   async showErrorToast(message: string) {
     const toast = await this.toastController.create({
       message: message,
       duration: 2000,
       color: 'danger',
-      position: 'top'
+      position: 'middle'
     });
     toast.present();
   }
 
-  login() {
+  submit() {
+    console.log(this.form.value.password.length);
     this.emailTouched = true;
     this.passwordTouched = true;
 
-    this.invalidEmail = !/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(this.email);
-    this.invalidPassword = this.password.length < 4 || this.password.length > 8; // Rango de 4 a 8 caracteres
+    this.invalidEmail = !/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(this.form.value.email);
+    this.invalidPassword = this.form.value.password.length < 4 || this.form.value.password.length > 8; // Rango de 4 a 8 caracteres
+
 
     if (!this.invalidEmail && !this.invalidPassword) {
-      // Lógica de autenticación exitosa...
-      const users: { email: string; password: string; role: string }[] = [
-        { email: 'admin@example.com', password: 'admin123', role: 'Administrador' },
-        { email: 'user@example.com', password: 'user123', role: 'Solicitante' },
-      ];
-      this.currentUser = users.find(u => u.email === this.email && u.password === this.password) || null;
-      if (this.currentUser) {
-        this.loggedIn = true;
-        // Redirigir a la página proof
-        this.router.navigateByUrl('/proof');
-      } else {
-        this.showErrorToast('Correo o contraseña incorrectos');
-      }
+      this.login()
     } else {
       if (this.invalidEmail) {
-        this.showErrorToast('Correo no válido');
+        this.utilsSvc.presentToast({
+          message: 'Correo no válido',
+          duration: 2500,
+          icon: 'alert-circle-outline',
+          color: 'danger',
+          position: 'middle'
+        })
       } else if (this.invalidPassword) {
-        this.showErrorToast('La contraseña debe contener de 4 a 8 caracteres');
+        this.utilsSvc.presentToast({
+          message: 'La contraseña debe contener de 4 a 8 caracteres',
+          duration: 2500,
+          icon: 'alert-circle-outline',
+          color: 'danger',
+          position: 'middle'
+        })
       }
     }
+  }
+
+  async login() {
+    const loading = await this.utilsSvc.loading()
+    await loading.present()
+
+    this.firebaseSvc.signIn(this.form.value as User).then(async res => {
+      this.getUserInfo(res.user.uid)
+    }).catch(error => {
+      console.error(error)
+      this.utilsSvc.presentToast({
+        message: error.message,
+        duration: 2500,
+        icon: 'alert-circle-outline',
+        color: 'danger',
+        position: 'middle'
+      })
+    }).finally(() => {
+      loading.dismiss()
+    })
+  }
+
+  async getUserInfo(uid: string) {
+    const loading = await this.utilsSvc.loading()
+    await loading.present()
+
+    let path = `users/${uid}`
+
+    this.firebaseSvc.getDocument(path).then((user: User) => {
+      this.utilsSvc.setInLocalStorage('user', user)
+      this.utilsSvc.routerLink('/proof')
+
+      this.utilsSvc.presentToast({
+        message: `Te damos la bienvenida ${user.name}`,
+        duration: 1500,
+        icon: 'person-outline',
+        color: 'primary',
+        position: 'middle'
+      })
+
+    }).catch(error => {
+      console.log(error)
+      this.utilsSvc.presentToast({
+        message: error.message,
+        duration: 2500,
+        icon: 'alert-circle-outline',
+        color: 'danger',
+        position: 'middle'
+      })
+    }).finally(() => {
+      loading.dismiss()
+    })
   }
 
   togglePasswordVisibility() {
