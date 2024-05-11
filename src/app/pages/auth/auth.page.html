@@ -1,13 +1,41 @@
-<ion-header [translucent]="true">
+<ion-header mode="ios">
   <ion-toolbar>
-    <ion-title>auth</ion-title>
+    <ion-title class="ion-text-center">Inicio de Sesión</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">auth</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding" mode="ios">
+  <div class="ion-text-center">
+    <ion-item lines="full">
+      <ion-input
+        type="email"
+        [(ngModel)]="email"
+        required
+        pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+        placeholder="Correo"
+      ></ion-input>
+      <ion-icon name="mail" slot="start"></ion-icon>
+    </ion-item>
+    <ion-label *ngIf="!email && emailTouched" color="danger">Ingrese su correo</ion-label>
+
+    <ion-item lines="full">
+      <ion-input
+        type="{{ hidePassword ? 'password' : 'text' }}"
+        [(ngModel)]="password"
+        required
+        minlength="4"
+        maxlength="8"
+        placeholder="Contraseña"
+      ></ion-input>
+      <ion-icon name="lock-closed" slot="start"></ion-icon>
+      <ion-icon *ngIf="password.length >= 4" [name]="hidePassword ? 'eye-off' : 'eye'" slot="end" (click)="togglePasswordVisibility()"></ion-icon>
+    </ion-item>
+    <ion-label *ngIf="!password && passwordTouched" color="danger">
+      La contraseña debe contener de 4 a 8 caracteres
+    </ion-label>
+
+    <ion-button expand="block" (click)="login()" [disabled]="!email || !password || invalidEmail || invalidPassword" shape="round" class="custom-button">
+      Ingresar
+    </ion-button>
+  </div>
 </ion-content>
