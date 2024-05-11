@@ -1,10 +1,16 @@
-<ion-header>
-  <ion-navbar color="primary">
-    <ion-title>Solicitudes de Constancias</ion-title>
-  </ion-navbar>
-</ion-header>
+<app-header title="Solicitudes de Constancias"></app-header>
 
 <ion-content>
+
+  <!-- <form [formGroup]="form">
+    <ion-item class="ion-margin">
+      <ion-select formControlName="month" label="Mes" interface="popover">
+        <ion-select-option (ion-change)="getLabel()" value="Todos">Todos</ion-select-option>
+        <ion-select-option *ngFor="let mes of meses" (ion-change)="getLabel()" [value]="mes">{{mes}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </form> -->
+  
   <div class="grafico-container">
     <canvas baseChart id="grafico-constancias"></canvas>
   </div>
@@ -13,12 +19,12 @@
     <ion-list>
       <ion-list-header>Solicitudes Recientes</ion-list-header>
       <ion-item *ngFor="let constancia of constancias | slice:0:8">
-        <ion-avatar slot="start">
+        <!-- <ion-avatar slot="start">
           <img [src]="constancia.imagen" alt="Imagen de constancia">
-        </ion-avatar>
+        </ion-avatar> -->
         <ion-label>
-          <h2>{{constancia.nombre}}</h2>
-          <p>{{constancia.fechaSolicitud}}</p>
+          <strong>{{constancia.name}}</strong>
+          <p>{{constancia.createdAt}}</p>
         </ion-label>
        <ion-swipe (ionSwipe)="swipe(constancia)">
           <ion-button-group slot="end">
