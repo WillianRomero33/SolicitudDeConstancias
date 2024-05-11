@@ -1,11 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Chart } from 'chart.js/auto';
-import { UtilsServiceService } from 'src/app/sevices/utils-service.service';
+import { UtilsService } from 'src/app/services/utils.service';
 import { Router } from '@angular/router';
-import { Proof } from 'src/app/models/proof.models';
-
-
-
+import { Proof } from 'src/app/models/proof.model';
 
 @Component({
   selector: 'app-proof',
@@ -43,7 +40,7 @@ export class ProofPage implements OnInit {
 
 
   constructor(
-    private utilsSvc: UtilsServiceService,
+    private utilsSvc: UtilsService,
     private router: Router,
   ) { }
 
