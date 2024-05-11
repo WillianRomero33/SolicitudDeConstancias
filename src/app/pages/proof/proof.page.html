@@ -2,11 +2,11 @@
 
 <ion-content>
 
-  <form [formGroup]="form" (ngSubmit)="getLabel()">
+  <form [formGroup]="form" (ngSubmit)="filterGraphic()">
     <ion-item class="ion-margin">
-      <ion-select [formControl]="form.controls.month" label="Mes" interface="popover" (ion-change)="getLabel()">
+      <ion-select [formControl]="form.controls.month" label="Mes" interface="popover">
         <ion-select-option value="Todos">Todos</ion-select-option>
-        <ion-select-option *ngFor="let mes of meses" (ion-change)="getLabel()" [value]="mes">{{mes}}</ion-select-option>
+        <ion-select-option *ngFor="let mes of meses; let i = index" [value]="i">{{mes}}</ion-select-option>
       </ion-select>
     </ion-item>
     <ion-button type="submit" expand="block" shape="round">
@@ -26,7 +26,7 @@
           <strong>{{constancia.name}}</strong>
           <p>{{constancia.createdAt}}</p>
         </ion-label>
-       <ion-swipe (ionSwipe)="swipe(constancia)">
+
           <ion-button-group slot="end" *ngIf="user.role == 'admin'">
             <ion-button color="success" (click)="enviarCorreo(constancia)">
               <ion-icon name="mail"></ion-icon>
@@ -38,7 +38,7 @@
               <ion-icon name="trash"></ion-icon>
             </ion-button>
           </ion-button-group>
-        </ion-swipe>
+
       </ion-item>
     </ion-list>
 

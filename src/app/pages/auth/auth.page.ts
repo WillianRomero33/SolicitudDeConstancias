@@ -44,7 +44,6 @@ export class AuthPage {
   }
 
   submit() {
-    console.log(this.form.value.password.length);
     this.emailTouched = true;
     this.passwordTouched = true;
 
