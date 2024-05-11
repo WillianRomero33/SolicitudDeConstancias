@@ -15,7 +15,8 @@ import { CustomInputComponent } from './components/custom-input/custom-input.com
   ],
   exports: [
     HeaderComponent,
-    CustomInputComponent
+    CustomInputComponent,
+    ReactiveFormsModule
   ],
   imports: [
     CommonModule,

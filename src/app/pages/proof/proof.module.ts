@@ -10,7 +10,7 @@ import { ProofPage } from './proof.page';
 import { SharedModule } from 'src/app/shared/shared.module';
 
 import { HttpClientModule } from '@angular/common/http';
-import { UtilsServiceService } from 'src/app/sevices/utils-service.service';
+import { UtilsService } from 'src/app/services/utils.service';
 // import { AppComponent } from 'src/app/app.component';
 // import { BrowserModule } from '@angular/platform-browser';
 
@@ -25,7 +25,7 @@ import { UtilsServiceService } from 'src/app/sevices/utils-service.service';
     HttpClientModule
   ],
   declarations: [ProofPage],
-  providers: [UtilsServiceService],
+  providers: [UtilsService],
   //bootstrap: [AppComponent]
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
