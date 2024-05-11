@@ -21,8 +21,6 @@ export class AuthPage {
   passwordTouched: boolean = false;
   invalidEmail: boolean = false;
   invalidPassword: boolean = false;
-  loggedIn: boolean = false;
-  currentUser: { email: string; password: string; role: string } | null = null;
   hidePassword: boolean = true;
 
   constructor(
@@ -30,6 +28,10 @@ export class AuthPage {
     private firebaseSvc: FirebaseService,
     private utilsSvc: UtilsService,
   ) { }
+
+  ionViewWillLeave() {
+    this.form.reset()
+  }
 
   async showErrorToast(message: string) {
     const toast = await this.toastController.create({
