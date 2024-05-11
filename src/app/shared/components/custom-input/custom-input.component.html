@@ -1,11 +1,24 @@
-<ion-item>
+<!-- <ion-item>
   <ion-icon *ngIf="icon" slot="start" name="{{ icon }}"></ion-icon>
   <ion-input
     debounce="500"
     type="{{ type }}"
     label="{{ label }}"
+    [formControl]="{{control}}"
     autocomplete="{{ autocomplete }}"
-    labelPlacement="floating"
+    label-placement="floating"
+    ></ion-input>
+</ion-item> -->
+
+<ion-item>
+  <ion-icon *ngIf="icon" slot="start" name="{{ icon }}"></ion-icon>
+  <ion-input
+    debounce="500"
+    [type]="type "
+    [label]="label "
+    [formControl]="control"
+    [autocomplete]="autocomplete "
+    label-placement="floating"
   
     ></ion-input>
 </ion-item>
