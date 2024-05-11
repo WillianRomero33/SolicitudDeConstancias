@@ -31,10 +31,10 @@
             <ion-button color="success" (click)="enviarCorreo(constancia)">
               <ion-icon name="mail"></ion-icon>
             </ion-button>
-            <ion-button color="primary" (click)="editarConstancia(constancia)">
+            <ion-button color="primary" (click)="editarConstancia('/proof/record-proof', constancia)">
               <ion-icon name="create"></ion-icon>
             </ion-button>
-            <ion-button color="danger" (click)="eliminarConstancia(constancia)">
+            <ion-button color="danger" (click)="confirmDeleteProof(constancia)">
               <ion-icon name="trash"></ion-icon>
             </ion-button>
           </ion-button-group>
