@@ -42,8 +42,15 @@ export class ProofPage implements OnInit {
   constanciasPerPage: number = 8; // Número de constancias por página
 
 
-  ngOnInit() {    
+  ngOnInit() {
+
+  }
+  ionViewWillEnter() {
     this.getConstancias()
+  }
+
+  ionViewWillLeave() {
+    this.graficoConstancias.destroy()
   }
 
   // OBTIENE EL LABEL ELEGIDO PARA EL GRAFICO
@@ -99,9 +106,9 @@ export class ProofPage implements OnInit {
     for (let month = 0; month < 12; month++) {
       const monthYear = `${month}-${this.form.value.year}`
       countByMonthTrue[monthYear] = 0
-      countByMonthFalse[monthYear] = 0  
+      countByMonthFalse[monthYear] = 0
     }
-    
+
 
     // OBTENEMOS EL MES Y AÑO DEL ATRIBUTO CREATED AT
     this.constancias.forEach(constancia => {
@@ -111,9 +118,9 @@ export class ProofPage implements OnInit {
         countByMonthTrue[monthYear]++
         console.log(countByMonthTrue);
 
-      } else {  
+      } else {
         countByMonthFalse[monthYear]++
-    console.log(countByMonthFalse);
+        console.log(countByMonthFalse);
 
       }
     })
@@ -124,7 +131,7 @@ export class ProofPage implements OnInit {
     console.log(this.monthCountFalse);
   }
 
-  setGraphicData(){
+  setGraphicData() {
     this.getCountByMonth()
     this.constanciasData = {
       labels: this.meses,
@@ -164,12 +171,58 @@ export class ProofPage implements OnInit {
     console.log('Enviar correo a:', constancia.correo); // Implementar la lógica para enviar correo
   }
 
-  editarConstancia(constancia: any): void {
-    console.log('Editar constancia:', constancia.id); // Implementar la lógica para editar constancia
+  editarConstancia(url: string, proof: Proof) {
+    this.utilsSvc.setData(proof as Proof)
+    this.utilsSvc.routerLink(url)
   }
 
-  eliminarConstancia(constancia: any): void {
-    console.log('Eliminar constancia:', constancia.id); // Implementar la lógica para eliminar constancia
+  // -------- ELIMINACION DE UNA CONTANCIA
+  async confirmDeleteProof(proof: Proof) {
+    this.utilsSvc.presentAlert({
+      header: 'Eliminar contancia!',
+      message: '¿Quieres eliminar esta consntacia?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary',
+        }, {
+          text: 'Si, eliminar',
+          handler: () => {
+            this.deleteProof(proof);
+          }
+        }
+      ]
+    })
+  }
+
+  async deleteProof(proof: Proof) {
+    let path = `proofs/${proof.id}`
+
+    const loading = await this.utilsSvc.loading()
+    await loading.present()
+
+    this.firebaseSvc.deleteDocument(path).then(async res => {
+      this.utilsSvc.presentToast({
+        message: "Contancia eliminada exitosamente",
+        duration: 1500,
+        icon: 'checkmark-circle-outline',
+        color: 'success',
+        position: 'middle'
+      })
+    }).catch(error => {
+      console.log(error)
+      this.utilsSvc.presentToast({
+        message: error.message,
+        duration: 2500,
+        icon: 'alert-circle-outline',
+        color: 'danger',
+        position: 'middle'
+      })
+    }).finally(() => {
+      loading.dismiss()
+      this.getConstancias()
+    })
   }
 
   registrarConstancia() {

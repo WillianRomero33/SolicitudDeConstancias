@@ -1,9 +1,12 @@
 export interface Proof{
-    id: string;
-    name: string;
+    id: string; 
+    name: string; 
+    dui: number;
+    phone: number;
+    email: string;
     type: string;
-    dui: number,
-    tel: number,
+    description: string;
+    qty: number;
     status: boolean;
-    createdAt: string
+    createdAt: string;
 }
