@@ -4,15 +4,19 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'proof',
+    redirectTo: 'auth',
     pathMatch: 'full',
   },
   {
-    path: 'proof',
-      loadChildren: () =>
-        import('./pages/proof/proof.module').then((m) => m.ProofPageModule),
+    path: 'auth',
+    loadChildren: () =>
+      import('./pages/auth/auth.module').then((m) => m.AuthPageModule),
   },
-
+  {
+    path: 'proof',
+    loadChildren: () =>
+      import('./pages/proof/proof.module').then((m) => m.ProofPageModule),
+  },
 ];
 
 @NgModule({
