@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { AlertController, LoadingController, ModalController, ModalOptions, ToastController, ToastOptions } from '@ionic/angular';
+import { AlertController, LoadingController, ModalController, ModalOptions, ToastController } from '@ionic/angular';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -8,25 +8,34 @@ import { Router } from '@angular/router';
 })
 export class UtilsService {
 
-  loadingCtrl = inject(LoadingController);
 
   //para mostrar el error despues de itentar hacer un login
   toastCtrl = inject(ToastController);
   router = inject(Router);
+
+
+  data: Proof
+  loadingCtrl = inject(LoadingController);
+  toastCtrl = inject(ToastController);
   alertCtrl = inject(AlertController);
+  router = inject(Router)
 
-  constructor(
-    private http: HttpClient,
-    //private httpClient: HttpClientModule,
-    private modalCtrl: ModalController
-  ) { }
-
-  getConstanciasPorMes(): any {
-    //return this.http.get('https://api.ejemplo.com/constancias/por-mes'); // URL de la API para datos por mes
+  routerLink(url: string) {
+    return this.router.navigateByUrl(url)
   }
 
-  getConstancias(page: number, pageSize: number): any {
-    //return this.http.get(`https://api.ejemplo.com/constancias?page=${page}&pageSize=${pageSize}`); // URL de la API para paginación
+  loading() {
+    return this.loadingCtrl.create({ spinner: 'crescent' })
+  }
+
+  async presentToast(opts?: ToastOptions) {
+    const toast = await this.toastCtrl.create(opts)
+    await toast.present()
+  }
+
+  async presentAlert(opts?: AlertOptions) {
+    const alert = await this.alertCtrl.create(opts)
+    await alert.present()
   }
 
   // Agregar métodos para las demás funcionalidades (enviar correo, editar, eliminar, registrar)
@@ -42,15 +51,6 @@ export class UtilsService {
     // Implementar la lógica para eliminar la constancia en la API
   }
 
-  // ========= loading =========
-  loading() {
-    return this.loadingCtrl.create({ spinner: 'crescent' });
-  }
 
-    //========== Toasts =========
-    async presentToast(opts?: ToastOptions) {
-      const toast = await this.toastCtrl.create(opts);
-      toast.present();
-    }
 
 }

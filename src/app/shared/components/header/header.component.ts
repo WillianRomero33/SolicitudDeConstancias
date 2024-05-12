@@ -1,4 +1,5 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
+import { FirebaseService } from 'src/app/services/firebase.service';
 
 @Component({
   selector: 'app-header',
@@ -9,9 +10,13 @@ export class HeaderComponent  implements OnInit {
 
   @Input() title!: string;
   @Input() backButton!: string;
+  @Input() isMain!: boolean;
 
-  constructor() { }
+  firebaseSvc = inject(FirebaseService)
 
   ngOnInit() {}
 
+  signOut () {
+    this.firebaseSvc.signOut()
+  }
 }

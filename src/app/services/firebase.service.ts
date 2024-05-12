@@ -5,7 +5,6 @@ import { User } from '../models/user.model';
 import { AngularFirestore } from "@angular/fire/compat/firestore";
 import { getFirestore, setDoc, getDoc, doc, addDoc, collection, collectionData, query, updateDoc, deleteDoc } from "@angular/fire/firestore";
 import { AngularFireStorage } from "@angular/fire/compat/storage";
-import { getStorage, uploadString, ref, getDownloadURL, deleteObject } from "firebase/storage";
 import { UtilsService } from "./utils.service";
 
 @Injectable({
@@ -47,7 +46,7 @@ export class FirebaseService {
   signOut() {
     getAuth().signOut()
     localStorage.removeItem('user')
-    // this.utilsSvc.routerLink('/auth')
+    this.utilsSvc.routerLink('/auth')
   }
 
   // ====================================== BASE DE DATOS =======================================

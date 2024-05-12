@@ -1,7 +1,19 @@
-<app-header title="Constancias">
-</app-header>
+<app-header title="Solicitudes de Constancias" [isMain]="true"></app-header>
 
-<ion-content class="ion-padding">
+<ion-content>
+
+  <form [formGroup]="form" (ngSubmit)="getLabel()">
+    <ion-item class="ion-margin">
+      <ion-select [formControl]="form.controls.month" label="Mes" interface="popover" (ion-change)="getLabel()">
+        <ion-select-option value="Todos">Todos</ion-select-option>
+        <ion-select-option *ngFor="let mes of meses" (ion-change)="getLabel()" [value]="mes">{{mes}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-button type="submit" expand="block" shape="round">
+      Filtrar
+    </ion-button>
+  </form>
+  
   <div class="grafico-container">
     <canvas baseChart id="grafico-constancias"></canvas>
   </div>
@@ -10,22 +22,19 @@
     <ion-list>
       <ion-list-header>Solicitudes Recientes</ion-list-header>
       <ion-item *ngFor="let constancia of constancias | slice:0:8">
-        <ion-avatar slot="start">
-          <img [src]="constancia.imagen" alt="Imagen de constancia">
-        </ion-avatar>
         <ion-label>
-          <h2>{{constancia.nombre}}</h2>
-          <p>{{constancia.fechaSolicitud}}</p>
+          <strong>{{constancia.name}}</strong>
+          <p>{{constancia.createdAt}}</p>
         </ion-label>
        <ion-swipe (ionSwipe)="swipe(constancia)">
-          <ion-button-group slot="end">
+          <ion-button-group slot="end" *ngIf="user.role == 'admin'">
             <ion-button color="success" (click)="enviarCorreo(constancia)">
               <ion-icon name="mail"></ion-icon>
             </ion-button>
-            <ion-button color="primary" (click)="editarConstancia(constancia)">
+            <ion-button color="primary" (click)="editarConstancia('/proof/record-proof', constancia)">
               <ion-icon name="create"></ion-icon>
             </ion-button>
-            <ion-button color="danger" (click)="eliminarConstancia(constancia)">
+            <ion-button  color="danger" (click)="confirmDeleteProof(constancia)">
               <ion-icon name="trash"></ion-icon>
             </ion-button>
           </ion-button-group>
