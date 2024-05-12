@@ -21,7 +21,7 @@
 
 <ion-content>
   <!-- (ngSubmit)="submit()" (keypress.enter)="submit()" -->
-  <form class="ion-padding ion-text-center">
+  <form class="ion-padding ion-text-center" (keypress.enter)="submit()">
 
     <!-- =========== Nombre =============== -->
     <app-custom-input autocomplete="name" label-placement="floating" [control]="form.controls.name" type="text"
@@ -84,7 +84,7 @@
 
     <!-- =========== Descripcion de la constancia =============== -->
     <app-custom-input autocomplete="description" label-placement="floating" [control]="form.controls.description"
-      type="text" label="Nombre Completo">
+      type="text" label="Descripción">
     </app-custom-input>
 
     <!-- Validamos conexion de la variable description

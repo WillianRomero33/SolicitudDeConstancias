@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 @Injectable({
   providedIn: 'root'
 })
-export class UtilsService {
+export class UtilsServiceService {
 
   loadingCtrl = inject(LoadingController);
 
@@ -42,6 +42,7 @@ export class UtilsService {
     // Implementar la lógica para eliminar la constancia en la API
   }
 
+
   // ========= loading =========
   loading() {
     return this.loadingCtrl.create({ spinner: 'crescent' });
@@ -52,5 +53,7 @@ export class UtilsService {
       const toast = await this.toastCtrl.create(opts);
       toast.present();
     }
+
+
 
 }
