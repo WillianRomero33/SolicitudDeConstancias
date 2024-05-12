@@ -56,8 +56,23 @@
 
         </ion-item>
       </ion-list>
+
+      <!--Scroll que cargara nuestros siguientes archivos-->
+      <ion-infinite-scroll (ionInfinite)="onIonInfinite($event)">
+        <ion-infinite-scroll-content>
+          Cargando...
+        </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
+
     </ion-card-content>
   </ion-card>
+
+  <!--===== Boton para generar el Archivo pdf ===== -->
+
+  <ion-button class="pdf" color="success" (click)="imprimirConstancias()">
+    <ion-icon name="document"></ion-icon>
+    Generar PDF
+  </ion-button>
 
 
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">

@@ -7,6 +7,7 @@ import { FirebaseService } from 'src/app/services/firebase.service';
 import { orderBy } from 'firebase/firestore';
 import { FormControl, FormGroup } from '@angular/forms';
 import { User } from 'src/app/models/user.model';
+import jsPDF from 'jspdf';
 
 @Component({
   selector: 'app-proof',
@@ -17,6 +18,9 @@ export class ProofPage implements OnInit {
   
   user: User
   loading: boolean = false
+  registrosPorPagina: number = 8;
+  registrosCargados: number = 0;
+
   constructor(
     private utilsSvc: UtilsService,
     private firebaseSvc: FirebaseService,
@@ -62,19 +66,47 @@ export class ProofPage implements OnInit {
 
   // OBTIENE TODAS LAS CONSTRANCIAS
   getConstancias() {
-    this.loading = true
-    let path = `proofs`
-    let query = [orderBy('createdAt', 'asc')]
+    this.loading = true;
+    const path = 'proofs';
+    const query = [orderBy('createdAt', 'asc')];
 
-    let sub = this.firebaseSvc.getCollectionData(path, query).subscribe((data: any) => {
-      this.proofs = data
-      sub.unsubscribe()
-      this.getFilteredProofs()
-      this.getLabel()
-      this.cargarGrafico()
-      this.loading = false
-    });
+    const sub = this.firebaseSvc.getCollectionData(path, query).subscribe(
+      (data: any) => {
+        this.proofs = data;
+        sub.unsubscribe();
+        this.getFilteredProofs();
+        this.getLabel();
+        this.cargarGrafico();
+        this.loading = false;
+      }
+    );
   }
+
+  onIonInfinite(ev) {
+    setTimeout(() => {
+      const registrosPorCargar = Math.min(
+        this.registrosPorPagina,
+        this.proofs.length - this.registrosCargados
+      );
+  
+      if (registrosPorCargar > 0) {
+        const registrosCargadosEnEstaPagina = this.proofs.slice(
+          this.registrosCargados,
+          this.registrosCargados + registrosPorCargar
+        );
+        this.constancias.push(...registrosCargadosEnEstaPagina);
+        this.registrosCargados += registrosPorCargar;
+      }
+  
+      ev.target.complete(); // Completa el evento de carga
+  
+      // Se desactiva el scroll infinito si ya no hay más registros que cargar
+      if (this.registrosCargados >= this.proofs.length) {
+        ev.target.disabled = true;
+      }
+    }, 500); // Tiempo de espera
+  }
+  
 
   // OBTENER NUEVO ARRAY DE CONSTANCIAS CON FILTRO
   getFilteredProofs() {
@@ -251,6 +283,43 @@ export class ProofPage implements OnInit {
 
   registrarConstancia() {
     this.router.navigateByUrl('/proof/record-proof');
+  }
+
+  imprimirConstancias() {
+    const doc = new jsPDF();
+  
+    // Título del documento
+    doc.setFontSize(16);
+    doc.text('Lista de Constancias', 10, 20);
+  
+    // Espacio adicional después del título
+    doc.setFontSize(12);
+    doc.text('', 10, 30);
+  
+    let y = 40; // Posición inicial vertical para el primer elemento
+  
+    this.constancias.forEach((constancia, index) => {
+      const estado = constancia.status ? 'Activa' : 'Inactiva';
+      const text = `${index + 1}-. Nombre: ${constancia.name} - Dui: ${constancia.dui} - Descripcion: ${constancia.description} - Correo: ${constancia.email} - Telefono: ${constancia.phone} - Fecha: ${constancia.createdAt} - Tipo: ${constancia.type} - Estado: ${estado} - id: ${constancia.id}`;
+  
+      // Divide el texto en líneas para ajustarlo al margen de la página
+      const lines = doc.splitTextToSize(text, doc.internal.pageSize.width - 20);
+  
+      // Agrega las líneas al documento con un espacio adicional después de cada constancia
+      lines.forEach(line => {
+        doc.text(line, 10, y);
+        y += 10; // Incrementa la posición vertical para el siguiente elemento
+      });
+  
+      // Espacio para dividir constancias
+      y += 10;
+    });
+  
+    // abre en otra ventana y Guarda el documento
+    const pdfData = doc.output();
+    const blob = new Blob([pdfData], { type: 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
   }
 }
 
