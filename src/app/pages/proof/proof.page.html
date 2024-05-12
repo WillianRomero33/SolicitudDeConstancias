@@ -18,48 +18,51 @@
       Filtrar
     </ion-button>
   </form>
-  
+  <!-- GRAFICO -->
   <div class="grafico-container">
     <canvas baseChart id="grafico-constancias"></canvas>
   </div>
+  <!-- MOSTRAR SOLICITUDES -->
+  <ion-card *ngIf="loading == false">
+    <ion-card-header>
+      <ion-card-title>Solicitudes de Constancias</ion-card-title>
+    </ion-card-header>
 
-    <ion-card>
-      <ion-card-header>
-        <ion-card-title>Solicitudes de Constancias</ion-card-title>
-      </ion-card-header>
+    <ion-card-content>
+      <!-- SI NO EXISTEN SOLICITUDES DE CONSTANCIAS CON EL FILTRO -->
+      <ion-label *ngIf="!constancias.length">No existen Solicitudes de Constancias en este rango filtrado</ion-label>
+      <!-- SI EXISTEN SOLICITUDES DE CONSTANCIAS CON EL FILTRO -->
+      <ion-list>
+        <ion-item *ngFor="let constancia of constancias">
+          <ion-label>
+            <strong>{{constancia.name}}</strong>
+            <p>{{constancia.createdAt}}</p>
+          </ion-label>
+          <ion-label>
+            <strong>{{constancia.status ? 'Activo' : 'Inactivo'}}</strong>
+          </ion-label>
 
-      <ion-card-content>
-        <ion-list>
-          <ion-item *ngFor="let constancia of constancias">
-            <ion-label>
-              <strong>{{constancia.name}}</strong>
-              <p>{{constancia.createdAt}}</p>
-            </ion-label>
-            <ion-label>
-              <strong>{{constancia.status ? 'Activo' : 'Inactivo'}}</strong>
-            </ion-label>
+          <ion-button-group slot="end" *ngIf="user.role == 'admin'">
+            <ion-button color="success" (click)="sendMail(constancia)">
+              <ion-icon name="mail"></ion-icon>
+            </ion-button>
+            <ion-button color="primary" (click)="editarConstancia('/proof/record-proof', constancia)">
+              <ion-icon name="create"></ion-icon>
+            </ion-button>
+            <ion-button color="danger" (click)="confirmDeleteProof(constancia)">
+              <ion-icon name="trash"></ion-icon>
+            </ion-button>
+          </ion-button-group>
 
-              <ion-button-group slot="end" *ngIf="user.role == 'admin'">
-                <ion-button color="success" (click)="sendMail(constancia)">
-                  <ion-icon name="mail"></ion-icon>
-                </ion-button>
-                <ion-button color="primary" (click)="editarConstancia('/proof/record-proof', constancia)">
-                  <ion-icon name="create"></ion-icon>
-                </ion-button>
-                <ion-button  color="danger" (click)="confirmDeleteProof(constancia)">
-                  <ion-icon name="trash"></ion-icon>
-                </ion-button>
-              </ion-button-group>
-
-          </ion-item>
-        </ion-list>
-      </ion-card-content>
-    </ion-card>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
 
 
-  <ion-fab vertical="bottom" horizontal="end">
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button (click)="registrarConstancia()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
-</ion-content> 
+</ion-content>

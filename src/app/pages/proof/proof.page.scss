@@ -9,6 +9,12 @@ body {
   h1, h2, h3 {
     text-align: center; /* Example text alignment */
   }
+
+  ion-card {
+    gap: 100px;
+    padding: 20px 0;
+    border-radius: 15px;
+  }
   
   /* Specific class styles */
   .grafico-container {

@@ -14,7 +14,9 @@ import { User } from 'src/app/models/user.model';
   styleUrls: ['./proof.page.scss'],
 })
 export class ProofPage implements OnInit {
-
+  
+  user: User
+  loading: boolean = false
   constructor(
     private utilsSvc: UtilsService,
     private firebaseSvc: FirebaseService,
@@ -26,12 +28,11 @@ export class ProofPage implements OnInit {
     }
   }
 
+  // FORM DE FILTRO POR MES
   years = []
   meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
-  user: User
-  // FORM DE FILTRO POR MES
   currentDate = new Date()
-  minYear = 2020  
+  minYear = 2020
   form = new FormGroup({
     month: new FormControl('Todos'),
     year: new FormControl<number>(this.currentDate.getFullYear())
@@ -61,36 +62,43 @@ export class ProofPage implements OnInit {
 
   // OBTIENE TODAS LAS CONSTRANCIAS
   getConstancias() {
+    this.loading = true
     let path = `proofs`
     let query = [orderBy('createdAt', 'asc')]
 
     let sub = this.firebaseSvc.getCollectionData(path, query).subscribe((data: any) => {
       this.proofs = data
       sub.unsubscribe()
-
-      if (this.form.value.month !== "Todos") {
-        this.getFilteredProofs()
-      }else{
-        this.constancias = this.proofs
-      }
+      this.getFilteredProofs()
       this.getLabel()
       this.cargarGrafico()
+      this.loading = false
     });
   }
 
   // OBTENER NUEVO ARRAY DE CONSTANCIAS CON FILTRO
-  getFilteredProofs(){
-    const monthObject = this.proofs.map(constancia => {
+  getFilteredProofs() {
+    if (this.form.value.month !== "Todos") {
       // OBTENER EL MES Y AÑO DE CREATED AT
-      const createdAt = new Date(constancia.createdAt);
-      const monthYear = `${createdAt.getMonth() + 1}-${createdAt.getFullYear()}`;
-      return { monthYear, constancia };
-    })
-    this.constancias = monthObject
-      .filter(data => data.monthYear === `${this.form.value.month+1}-${this.form.value.year}`)
-      .map(filteredData => filteredData.constancia)
-      console.log(this.constancias);
-      
+      const monthObject = this.proofs.map(constancia => {
+        const createdAt = new Date(constancia.createdAt);
+        const monthYear = `${createdAt.getMonth() + 1}-${createdAt.getFullYear()}`;
+        return { monthYear, constancia };
+      })
+      this.constancias = monthObject
+        .filter(data => data.monthYear === `${this.form.value.month + 1}-${this.form.value.year}`)
+        .map(filteredData => filteredData.constancia)
+    } else {
+      // OBTENER EL MES Y AÑO DE CREATED AT
+      const monthObject = this.proofs.map(constancia => {
+        const createdAt = new Date(constancia.createdAt);
+        const monthYear = `${createdAt.getFullYear()}`;
+        return { monthYear, constancia };
+      })
+      this.constancias = monthObject
+        .filter(data => data.monthYear === `${this.form.value.year}`)
+        .map(filteredData => filteredData.constancia)
+    }   
   }
 
   // OBTIENE EL LABEL ELEGIDO PARA EL GRAFICO
@@ -176,13 +184,9 @@ export class ProofPage implements OnInit {
   // REFRESCAR GRAFICO Y SOLICITUDES CON FILTRO DE MES Y AÑO
   filterGraphic() {
     this.graficoConstancias.destroy()
-    if (this.form.value.month !== "Todos") {
-      this.getFilteredProofs()
-    }else{
-      this.constancias = this.proofs
-    }
+    this.getFilteredProofs()
     this.getLabel()
-    this.cargarGrafico()
+    this.cargarGrafico()    
   }
 
   // ENVIAR CORREO
