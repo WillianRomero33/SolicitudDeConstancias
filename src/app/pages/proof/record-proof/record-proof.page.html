@@ -1,11 +1,4 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/proof"></ion-back-button>
-    </ion-buttons>
-    <ion-title>{{proof ? 'Actualizar Constancia' : 'Agregar Constancia'}} </ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-header title="{{proof ? 'Actualizar Constancia' : 'Agregar Constancia'}}" backButton="proof"></app-header>
 
 <ion-content>
   <form class="ion-padding ion-text-center" (ngSubmit)="submit()" (keypress.enter)="submit()">
