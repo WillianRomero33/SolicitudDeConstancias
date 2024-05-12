@@ -1,7 +1,7 @@
 <app-header title="Solicitudes de Constancias" [isMain]="true"></app-header>
 
 <ion-content>
-
+  <!-- FORM DE FILTRO -->
   <form [formGroup]="form" (ngSubmit)="filterGraphic()">
     <ion-item class="ion-margin">
       <ion-select [formControl]="form.controls.month" label="Mes" interface="popover">
@@ -15,13 +15,20 @@
       </ion-select>
     </ion-item>
     <ion-button type="submit" color="tertiary" expand="block" shape="round">
-      Filtrar
+      <ion-icon slot="icon-only" name="filter"></ion-icon>
+      <ion-label class="ion-padding">Filtrar</ion-label>
     </ion-button>
   </form>
   <!-- GRAFICO -->
   <div class="grafico-container">
     <canvas baseChart id="grafico-constancias"></canvas>
   </div>
+  <!--  GENERAR PDF -->
+  <ion-button (click)="createPdf()" color="success" expand="block" shape="round">
+    <ion-icon slot="icon-only" name="document"></ion-icon>
+    <ion-label class="ion-padding">Generar PDF</ion-label>
+  </ion-button>
+
   <!-- MOSTRAR SOLICITUDES -->
   <ion-card *ngIf="loading == false">
     <ion-card-header>
@@ -33,7 +40,7 @@
       <ion-label *ngIf="!constancias.length">No existen Solicitudes de Constancias en este rango filtrado</ion-label>
       <!-- SI EXISTEN SOLICITUDES DE CONSTANCIAS CON EL FILTRO -->
       <ion-list>
-        <ion-item *ngFor="let constancia of constancias">
+        <ion-item *ngFor="let constancia of constancias | paginate: { itemsPerPage: 8, currentPage: page }">
           <ion-label>
             <strong>{{constancia.name}}</strong>
             <p>{{constancia.createdAt}}</p>
@@ -56,6 +63,7 @@
 
         </ion-item>
       </ion-list>
+      <pagination-controls *ngIf="constancias.length > 5" class="ion-text-center" (pageChange)="page = $event"></pagination-controls>
     </ion-card-content>
   </ion-card>
 

@@ -9,6 +9,8 @@ import { ProofPageRoutingModule } from './proof-routing.module';
 import { ProofPage } from './proof.page';
 import { SharedModule } from 'src/app/shared/shared.module';
 
+import { NgxPaginationModule } from "ngx-pagination";
+
 @NgModule({
   imports: [
     CommonModule,
@@ -16,6 +18,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
     IonicModule,
     ProofPageRoutingModule,
     SharedModule,
+    NgxPaginationModule,
   ],
   declarations: [ProofPage],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]

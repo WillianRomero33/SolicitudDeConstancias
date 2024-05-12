@@ -1,6 +1,5 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ModalController } from '@ionic/angular';
 import { Proof } from 'src/app/models/proof.model';
 import { User } from 'src/app/models/user.model';
 import { FirebaseService } from 'src/app/services/firebase.service';
@@ -17,7 +16,6 @@ export class RecordProofPage implements OnInit {
   user: User
 
   constructor(
-    private modalCtrl: ModalController,
     private firebaseSvc: FirebaseService,
     private utilsSvc: UtilsService,
   ) {}
@@ -25,8 +23,8 @@ export class RecordProofPage implements OnInit {
    form = new FormGroup({
     id: new FormControl(''),
     name: new FormControl('', [Validators.required, Validators.minLength(10)]),
-    dui: new FormControl<number | null>(null, [Validators.required, Validators.minLength(9)]),
-    phone: new FormControl<number | null>(null, [Validators.required, Validators.minLength(8)]),
+    dui: new FormControl<number | null>(null, [Validators.required, Validators.minLength(9), Validators.maxLength(9)]),
+    phone: new FormControl<number | null>(null, [Validators.required, Validators.minLength(8), Validators.maxLength(8)]),
     email: new FormControl('', [Validators.required, Validators.email]),
     type: new FormControl('', [Validators.required]),
     description: new FormControl('', [Validators.required, Validators.minLength(5)]),

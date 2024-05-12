@@ -12,11 +12,6 @@ const routes: Routes = [
     path: 'record-proof',
     loadChildren: () => import('./record-proof/record-proof.module').then( m => m.RecordProofPageModule)
   },
-  {
-    path: 'detail-proof',
-    loadChildren: () => import('./detail-proof/detail-proof.module').then( m => m.DetailProofPageModule)
-  },
-
 ];
 
 @NgModule({
