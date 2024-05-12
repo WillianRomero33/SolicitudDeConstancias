@@ -7,6 +7,13 @@ import { FirebaseService } from 'src/app/services/firebase.service';
 import { orderBy } from 'firebase/firestore';
 import { FormControl, FormGroup } from '@angular/forms';
 import { User } from 'src/app/models/user.model';
+// PDF
+import { FileOpener } from "@awesome-cordova-plugins/file-opener";
+import { File } from "@awesome-cordova-plugins/file";
+import * as pdfMake from "pdfmake/build/pdfmake";
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+
+(<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 
 @Component({
   selector: 'app-proof',
@@ -17,6 +24,7 @@ export class ProofPage implements OnInit {
   
   user: User
   loading: boolean = false
+  pdfObj: any
   page: number = 1
   constructor(
     private utilsSvc: UtilsService,
@@ -252,6 +260,56 @@ export class ProofPage implements OnInit {
 
   registrarConstancia() {
     this.router.navigateByUrl('/proof/record-proof');
+  }
+
+  // ================== PDF ===============
+
+  async createPdf() {
+    try {
+      let content = [
+        ['Mes', 'Activas', 'Inactivas', 'Totales']
+      ]
+      for (let i = 0; i < this.label.length; i++) {
+        // Obtenemos el mes, el conteo de activas y el conteo de inactivas para este índice
+        let mes = this.label[i];
+        let activas = this.monthCountTrue[i];
+        let inactivas = this.monthCountFalse[i];
+        let totales = activas + inactivas;
+        // Creamos una nueva fila con esta información y la agregamos al cuerpo del PDF
+        let fila = [mes, activas, inactivas, totales];
+        content.push(fila);
+      }
+      console.log(content);
+      
+      let docObj = this.getPdfDefinition(content)
+      this.pdfObj = pdfMake.createPdf(docObj).open()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  getPdfDefinition(content) {
+    var dd = {
+      content: [
+        { text: 'Informe de Solicitudes Registrados', style: 'header' },
+        { text: '\n\n' },
+        {
+          table: {
+            headerRows: 1,
+            widths: ['*', '*', '*', '*'],
+            body: content
+          }
+        }
+      ],
+      styles: {
+        header: {
+          fontSize: 18,
+          bold: true,
+          alignment: 'center'
+        }
+      }
+    }
+    return dd
   }
 }
 

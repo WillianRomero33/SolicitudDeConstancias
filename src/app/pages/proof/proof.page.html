@@ -1,7 +1,7 @@
 <app-header title="Solicitudes de Constancias" [isMain]="true"></app-header>
 
 <ion-content>
-
+  <!-- FORM DE FILTRO -->
   <form [formGroup]="form" (ngSubmit)="filterGraphic()">
     <ion-item class="ion-margin">
       <ion-select [formControl]="form.controls.month" label="Mes" interface="popover">
@@ -22,6 +22,11 @@
   <div class="grafico-container">
     <canvas baseChart id="grafico-constancias"></canvas>
   </div>
+  <!--  GENERAR PDF -->
+  <ion-button (click)="createPdf()" color="tertiary" expand="block" shape="round">
+    GENERAR PDF
+  </ion-button>
+
   <!-- MOSTRAR SOLICITUDES -->
   <ion-card *ngIf="loading == false">
     <ion-card-header>
@@ -56,7 +61,7 @@
 
         </ion-item>
       </ion-list>
-      <pagination-controls class="ion-text-center" (pageChange)="page = $event"></pagination-controls>
+      <pagination-controls *ngIf="constancias.length > 8" class="ion-text-center" (pageChange)="page = $event"></pagination-controls>
     </ion-card-content>
   </ion-card>
 
