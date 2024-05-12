@@ -8,8 +8,6 @@ import { orderBy } from 'firebase/firestore';
 import { FormControl, FormGroup } from '@angular/forms';
 import { User } from 'src/app/models/user.model';
 // PDF
-import { FileOpener } from "@awesome-cordova-plugins/file-opener";
-import { File } from "@awesome-cordova-plugins/file";
 import * as pdfMake from "pdfmake/build/pdfmake";
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
@@ -279,7 +277,6 @@ export class ProofPage implements OnInit {
         let fila = [mes, activas, inactivas, totales];
         content.push(fila);
       }
-      console.log(content);
       
       let docObj = this.getPdfDefinition(content)
       this.pdfObj = pdfMake.createPdf(docObj).open()
