@@ -15,21 +15,26 @@ import { User } from 'src/app/models/user.model';
 })
 export class ProofPage implements OnInit {
 
-  user: User
   constructor(
     private utilsSvc: UtilsService,
     private firebaseSvc: FirebaseService,
     private router: Router,
-  ) { 
+  ) {
     this.user = this.utilsSvc.getFromLocalStorage('user')
+    for (let year = this.currentDate.getFullYear(); year >= this.minYear; year--) {
+      this.years.push(year)
+    }
   }
 
-  // FORM DE FILTRO POR MES
+  years = []
   meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre']
+  user: User
+  // FORM DE FILTRO POR MES
   currentDate = new Date()
+  minYear = 2020  
   form = new FormGroup({
     month: new FormControl('Todos'),
-    year: new FormControl(this.currentDate.getFullYear())
+    year: new FormControl<number>(this.currentDate.getFullYear())
   });
 
   // Propiedades para el gráfico
@@ -40,21 +45,52 @@ export class ProofPage implements OnInit {
   monthCountFalse = []
 
   // Propiedades para la lista de constancias
-  constancias: Proof[] = [];
-  currentPage: number = 1;
-  totalPages: number = 1;
-  constanciasPerPage: number = 8; // Número de constancias por página
-
+  constancias: Proof[] = []
+  proofs: Proof[] = []
 
   ngOnInit() {
   }
-  
+
   ionViewWillEnter() {
     this.getConstancias()
   }
 
   ionViewWillLeave() {
     this.graficoConstancias.destroy()
+  }
+
+  // OBTIENE TODAS LAS CONSTRANCIAS
+  getConstancias() {
+    let path = `proofs`
+    let query = [orderBy('createdAt', 'asc')]
+
+    let sub = this.firebaseSvc.getCollectionData(path, query).subscribe((data: any) => {
+      this.proofs = data
+      sub.unsubscribe()
+
+      if (this.form.value.month !== "Todos") {
+        this.getFilteredProofs()
+      }else{
+        this.constancias = this.proofs
+      }
+      this.getLabel()
+      this.cargarGrafico()
+    });
+  }
+
+  // OBTENER NUEVO ARRAY DE CONSTANCIAS CON FILTRO
+  getFilteredProofs(){
+    const monthObject = this.proofs.map(constancia => {
+      // OBTENER EL MES Y AÑO DE CREATED AT
+      const createdAt = new Date(constancia.createdAt);
+      const monthYear = `${createdAt.getMonth() + 1}-${createdAt.getFullYear()}`;
+      return { monthYear, constancia };
+    })
+    this.constancias = monthObject
+      .filter(data => data.monthYear === `${this.form.value.month+1}-${this.form.value.year}`)
+      .map(filteredData => filteredData.constancia)
+      console.log(this.constancias);
+      
   }
 
   // OBTIENE EL LABEL ELEGIDO PARA EL GRAFICO
@@ -64,7 +100,6 @@ export class ProofPage implements OnInit {
     } else {
       this.label = [this.meses[this.form.value.month]]
     }
-    console.log(this.label);
   }
 
   // RENDERIZAR GRAFICO
@@ -85,49 +120,6 @@ export class ProofPage implements OnInit {
         }
       }
     });
-  }
-
-  // OBTIENE TODAS LAS CONSTRANCIAS
-  getConstancias() {
-    let path = `proofs`
-    let query = [orderBy('createdAt', 'asc')]
-
-    let sub = this.firebaseSvc.getCollectionData(path, query).subscribe((data: any) => {
-      this.constancias = data
-      console.log(this.constancias);
-      sub.unsubscribe()
-      this.getLabel()
-      this.cargarGrafico()
-    });
-  }
-
-  // OBTIENE EL MES Y AÑO DE CREATEDAT DE CADA CONSTANCIA
-  getCountByMonth() {
-    const countByMonthTrue = {}
-    const countByMonthFalse = {}
-    for (let month = 0; month < 12; month++) {
-      const monthYear = `${month}-${this.form.value.year}`
-      countByMonthTrue[monthYear] = 0
-      countByMonthFalse[monthYear] = 0
-    }
-    // OBTENEMOS EL MES Y AÑO DEL ATRIBUTO CREATED AT
-    this.constancias.forEach(constancia => {
-      const createdAt = new Date(constancia.createdAt)
-      const monthYear = `${createdAt.getMonth()}-${createdAt.getFullYear()}`
-      if (constancia.status) {
-        countByMonthTrue[monthYear]++
-      } else {
-        countByMonthFalse[monthYear]++
-      }
-    })
-    
-    this.monthCountTrue = Object.values(countByMonthTrue)
-    this.monthCountFalse = Object.values(countByMonthFalse)
-    
-    if (this.form.value.month !== "Todos") {
-      this.monthCountTrue = [this.monthCountTrue[this.form.value.month]]
-      this.monthCountFalse = [this.monthCountFalse[this.form.value.month]]
-    }
   }
 
   // SETEA LA INFORMACION QUE IRA EN EL GRAFICO
@@ -151,22 +143,50 @@ export class ProofPage implements OnInit {
     }
   }
 
-  filterGraphic(){
-    this.graficoConstancias.destroy()
-    this.getConstancias()
+  // OBTIENE EL MES Y AÑO DE CREATEDAT DE CADA CONSTANCIA
+  getCountByMonth() {
+    const countByMonthTrue = {}
+    const countByMonthFalse = {}
+    // OBTENER UN OBEJTO PARA ACTIVOS E INACTIVOS CON TODOS LOS MESES DEL AÑO CON CONTEO INIZIALIZADO A 0
+    for (let month = 0; month < 12; month++) {
+      const monthYear = `${month}-${this.form.value.year}`
+      countByMonthTrue[monthYear] = 0
+      countByMonthFalse[monthYear] = 0
+    }
+    // OBTENEMOS EL MES Y AÑO DEL ATRIBUTO CREATED AT
+    this.constancias.forEach(constancia => {
+      const createdAt = new Date(constancia.createdAt)
+      const monthYear = `${createdAt.getMonth()}-${createdAt.getFullYear()}`
+      if (constancia.status) {
+        countByMonthTrue[monthYear]++
+      } else {
+        countByMonthFalse[monthYear]++
+      }
+    })
+
+    this.monthCountTrue = Object.values(countByMonthTrue)
+    this.monthCountFalse = Object.values(countByMonthFalse)
+
+    if (this.form.value.month !== "Todos") {
+      this.monthCountTrue = [this.monthCountTrue[this.form.value.month]]
+      this.monthCountFalse = [this.monthCountFalse[this.form.value.month]]
+    }
   }
 
-
-
-
-
-
-
-
-
+  // REFRESCAR GRAFICO Y SOLICITUDES CON FILTRO DE MES Y AÑO
+  filterGraphic() {
+    this.graficoConstancias.destroy()
+    if (this.form.value.month !== "Todos") {
+      this.getFilteredProofs()
+    }else{
+      this.constancias = this.proofs
+    }
+    this.getLabel()
+    this.cargarGrafico()
+  }
 
   // ENVIAR CORREO
-  enviarCorreo(constancia: any): void {
+  sendMail(constancia: Proof) {
 
   }
 
@@ -176,7 +196,7 @@ export class ProofPage implements OnInit {
     this.utilsSvc.routerLink(url)
   }
 
-  // -------- ELIMINACION DE UNA CONTANCIA
+  // -------- ELIMINACION DE UNA CONTANCIA --------
   async confirmDeleteProof(proof: Proof) {
     this.utilsSvc.presentAlert({
       header: 'Eliminar contancia!',

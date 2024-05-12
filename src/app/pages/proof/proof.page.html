@@ -9,7 +9,12 @@
         <ion-select-option *ngFor="let mes of meses; let i = index" [value]="i">{{mes}}</ion-select-option>
       </ion-select>
     </ion-item>
-    <ion-button type="submit" expand="block" shape="round">
+    <ion-item class="ion-margin">
+      <ion-select [formControl]="form.controls.year" label="Año" interface="popover">
+        <ion-select-option *ngFor="let year of years" [value]="year">{{year}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-button type="submit" color="tertiary" expand="block" shape="round">
       Filtrar
     </ion-button>
   </form>
@@ -18,32 +23,39 @@
     <canvas baseChart id="grafico-constancias"></canvas>
   </div>
 
-  <div class="lista-constancias">
-    <ion-list>
-      <ion-list-header>Solicitudes Recientes</ion-list-header>
-      <ion-item *ngFor="let constancia of constancias | slice:0:8">
-        <ion-label>
-          <strong>{{constancia.name}}</strong>
-          <p>{{constancia.createdAt}}</p>
-        </ion-label>
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Solicitudes de Constancias</ion-card-title>
+      </ion-card-header>
 
-          <ion-button-group slot="end" *ngIf="user.role == 'admin'">
-            <ion-button color="success" (click)="enviarCorreo(constancia)">
-              <ion-icon name="mail"></ion-icon>
-            </ion-button>
-            <ion-button color="primary" (click)="editarConstancia('/proof/record-proof', constancia)">
-              <ion-icon name="create"></ion-icon>
-            </ion-button>
-            <ion-button  color="danger" (click)="confirmDeleteProof(constancia)">
-              <ion-icon name="trash"></ion-icon>
-            </ion-button>
-          </ion-button-group>
+      <ion-card-content>
+        <ion-list>
+          <ion-item *ngFor="let constancia of constancias">
+            <ion-label>
+              <strong>{{constancia.name}}</strong>
+              <p>{{constancia.createdAt}}</p>
+            </ion-label>
+            <ion-label>
+              <strong>{{constancia.status ? 'Activo' : 'Inactivo'}}</strong>
+            </ion-label>
 
-      </ion-item>
-    </ion-list>
+              <ion-button-group slot="end" *ngIf="user.role == 'admin'">
+                <ion-button color="success" (click)="sendMail(constancia)">
+                  <ion-icon name="mail"></ion-icon>
+                </ion-button>
+                <ion-button color="primary" (click)="editarConstancia('/proof/record-proof', constancia)">
+                  <ion-icon name="create"></ion-icon>
+                </ion-button>
+                <ion-button  color="danger" (click)="confirmDeleteProof(constancia)">
+                  <ion-icon name="trash"></ion-icon>
+                </ion-button>
+              </ion-button-group>
 
-    <!-- <ion-pagination [page]="currentPage" [pageCount]="totalPages" (ionPageChange)="onPageChange($event)"></ion-pagination> -->
-  </div>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
 
   <ion-fab vertical="bottom" horizontal="end">
     <ion-fab-button (click)="registrarConstancia()">
