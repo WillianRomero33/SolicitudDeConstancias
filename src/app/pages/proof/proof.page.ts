@@ -17,6 +17,7 @@ export class ProofPage implements OnInit {
   
   user: User
   loading: boolean = false
+  page: number = 1
   constructor(
     private utilsSvc: UtilsService,
     private firebaseSvc: FirebaseService,

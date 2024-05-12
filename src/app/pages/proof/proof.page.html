@@ -33,7 +33,7 @@
       <ion-label *ngIf="!constancias.length">No existen Solicitudes de Constancias en este rango filtrado</ion-label>
       <!-- SI EXISTEN SOLICITUDES DE CONSTANCIAS CON EL FILTRO -->
       <ion-list>
-        <ion-item *ngFor="let constancia of constancias">
+        <ion-item *ngFor="let constancia of constancias | paginate: { itemsPerPage: 8, currentPage: page }">
           <ion-label>
             <strong>{{constancia.name}}</strong>
             <p>{{constancia.createdAt}}</p>
@@ -56,6 +56,7 @@
 
         </ion-item>
       </ion-list>
+      <pagination-controls class="ion-text-center" (pageChange)="page = $event"></pagination-controls>
     </ion-card-content>
   </ion-card>
 
