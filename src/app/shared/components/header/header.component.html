@@ -9,8 +9,8 @@
       </strong>
     </ion-title>
     <ion-buttons slot="end">
-      <ion-button *ngIf="isMain" (click)="signOut()" color="danger">
-        <ion-icon name="log-out"></ion-icon>
+      <ion-button *ngIf="isMain" color="danger" (click)="signOut()" >
+        <ion-icon slot="icon-only" name="log-out"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>

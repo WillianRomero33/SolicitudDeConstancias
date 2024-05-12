@@ -33,18 +33,7 @@ export class AuthPage {
     this.form.reset()
   }
 
-  async showErrorToast(message: string) {
-    const toast = await this.toastController.create({
-      message: message,
-      duration: 2000,
-      color: 'danger',
-      position: 'middle'
-    });
-    toast.present();
-  }
-
   submit() {
-    console.log(this.form.value.password.length);
     this.emailTouched = true;
     this.passwordTouched = true;
 
