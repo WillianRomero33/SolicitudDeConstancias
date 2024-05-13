@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, inject } from '@angular/core';
 import { Chart } from 'chart.js/auto';
 import { UtilsService } from 'src/app/services/utils.service';
 import { Router } from '@angular/router';
@@ -10,6 +10,7 @@ import { User } from 'src/app/models/user.model';
 // PDF
 import * as pdfMake from "pdfmake/build/pdfmake";
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import { EmailComposer } from '@awesome-cordova-plugins/email-composer/ngx';
 
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 
@@ -17,9 +18,11 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
   selector: 'app-proof',
   templateUrl: './proof.page.html',
   styleUrls: ['./proof.page.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class ProofPage implements OnInit {
   
+  emailComposer = inject(EmailComposer)
   user: User
   loading: boolean = false
   pdfObj: any
@@ -71,7 +74,7 @@ export class ProofPage implements OnInit {
   getConstancias() {
     this.loading = true
     let path = `proofs`
-    let query = [orderBy('createdAt', 'asc')]
+    let query = [orderBy('createdHour', 'desc')]
 
     let sub = this.firebaseSvc.getCollectionData(path, query).subscribe((data: any) => {
       this.proofs = data
@@ -191,14 +194,37 @@ export class ProofPage implements OnInit {
   // REFRESCAR GRAFICO Y SOLICITUDES CON FILTRO DE MES Y AÑO
   filterGraphic() {
     this.graficoConstancias.destroy()
+    this.page = 1
     this.getFilteredProofs()
     this.getLabel()
     this.cargarGrafico()    
   }
 
   // ENVIAR CORREO
-  sendMail(constancia: Proof) {
+  async sendMail(constancia: Proof) {
+    let email = {
+      to: constancia.email,
+      cc: '',
+      bcc: [],
+      attachments: [],
+      subject: 'Constancia lista',
+      body: `Le informamos que su constancias de ${constancia.type} ya esta lista`,
+      isHtml: false
+    }
+    // URL personalizada de Gmail con los parámetros del correo electrónico
+    let gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1&to=' + email.to + '&su=' + encodeURIComponent(email.subject) + '&body=' + encodeURIComponent(email.body);
 
+    const loading = await this.utilsSvc.loading()
+    await loading.present()
+
+    this.emailComposer.open(email).then(() => {
+      console.log("Correo Enviado")
+    }).catch((error) => {
+      console.error("Ha ocurrido un error", error)
+      window.open(gmailUrl, '_blank');
+    }).finally(() => {
+      loading.dismiss()
+    })
   }
 
   // ROUTER LINK 
@@ -252,6 +278,7 @@ export class ProofPage implements OnInit {
       })
     }).finally(() => {
       loading.dismiss()
+      this.graficoConstancias.destroy()
       this.getConstancias()
     })
   }

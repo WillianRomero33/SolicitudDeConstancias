@@ -4,7 +4,7 @@
   <form class="ion-padding ion-text-center" (ngSubmit)="submit()" (keypress.enter)="submit()">
 
     <!-- =========== NOMBRE =============== -->
-    <app-custom-input autocomplete="name" label-placement="floating" [control]="form.controls.name" type="text"
+    <app-custom-input autocomplete="name" [control]="form.controls.name" type="text"
       label="Nombre Completo">
     </app-custom-input>
 
@@ -15,29 +15,31 @@
     </div>
 
     <!-- =========== DUI =============== -->
-    <app-custom-input autocomplete="dui" label-placement="floating" [control]="form.controls.dui" type="text"
-      label="DUI">
+    <app-custom-input autocomplete="dui" [control]="form.controls.dui" type="text"
+      label="DUI" placeholder="123456789">
     </app-custom-input>
 
     <!-- Validamos conexion de la variable DUI -->
     <div class="validators" *ngIf="form.controls.dui.errors && form.controls.dui.touched">
       <div *ngIf="form.controls.dui.errors?.['required']">El DUI es requerido</div>
-      <div *ngIf="form.controls.dui.errors?.['min']">El numero de DUI es invalido</div>
+      <div *ngIf="form.controls.dui.errors?.['minlength']">El numero de DUI es invalido</div>
+      <div *ngIf="form.controls.dui.errors?.['maxlength']">El numero de DUI es invalido</div>
     </div>
 
     <!-- =========== NUMERO DE TELEFONO =============== -->
-    <app-custom-input autocomplete="phone" label-placement="floating" [control]="form.controls.phone" type="number"
-      label="Numero de telefono">
+    <app-custom-input autocomplete="phone" [control]="form.controls.phone" type="number"
+      label="Numero de telefono" placeholder="12345678">
     </app-custom-input>
 
     <!-- Validamos conexion de la variable phone -->
     <div class="validators" *ngIf="form.controls.phone.errors && form.controls.phone.touched">
-      <div *ngIf="form.controls.phone.errors?.['required']">El numero es requerido</div>
-      <div *ngIf="form.controls.phone.errors?.['min']">El numero debe contener al menos 8 caracteres</div>
+      <div *ngIf="form.controls.phone.errors?.['required']">El teléfono es requerido</div>
+      <div *ngIf="form.controls.phone.errors?.['minlength']">El teléfono debe contener 8 caracteres</div>
+      <div *ngIf="form.controls.phone.errors?.['maxlength']">El teléfono debe contener 8 caracteres</div>
     </div>
 
     <!-- =========== EMAIL =============== -->
-    <app-custom-input autocomplete="email" label-placement="floating" [control]="form.controls.email" type="text"
+    <app-custom-input autocomplete="email" [control]="form.controls.email" type="text"
       label="Correo">
     </app-custom-input>
 
@@ -48,7 +50,7 @@
     </div>
 
     <!-- =========== TIPO DE CONSTANCIA =============== -->
-    <app-custom-input autocomplete="type" label-placement="floating" [control]="form.controls.type" type="text"
+    <app-custom-input autocomplete="type" [control]="form.controls.type" type="text"
       label="Tipo de constancia">
     </app-custom-input>
 
@@ -58,20 +60,18 @@
     </div>
 
     <!-- =========== DESCRIPCION DE LA CONSTANCIA =============== -->
-    <app-custom-input autocomplete="description" label-placement="floating" [control]="form.controls.description"
+    <app-custom-input autocomplete="description" [control]="form.controls.description"
       type="text" label="Descripcion">
     </app-custom-input>
 
     <!-- Validamos conexion de la variable description -->
     <div class="validators" *ngIf="form.controls.description.errors && form.controls.description.touched">
       <div *ngIf="form.controls.description.errors?.['required']">Ingrese una descripcion</div>
-      <div *ngIf="form.controls.description.errors?.['minLength']">La descripcion de contener al menos 5 caracteres
-      </div>
+      <div *ngIf="form.controls.description.errors?.['minLength']">La descripcion de contener al menos 5 caracteres</div>
     </div>
 
     <!-- =========== CANTIDAD DE CONSTANCIAS SOLICITADAS =============== -->
-    <!-- (ionInput)= "setNumberInputs()" -->
-    <app-custom-input [control]="form.controls.qty" label-placement="floating" type="number"
+    <app-custom-input [control]="form.controls.qty" type="number"
       label="Cantidad"></app-custom-input>
 
     <!-- Validamos conexcion de la variable qty -->
@@ -95,8 +95,8 @@
 
 
     <ion-button mode="ios" class="ion-margin" type="submit" [disabled]="form.invalid">
-      {{proof ? 'Actualizar Constancia' : 'Agregar Constancia'}} <ion-icon slot="end"
-        name="checkmark-circle-outline"></ion-icon>
+      {{proof ? 'Actualizar Constancia' : 'Agregar Constancia'}}
+      <ion-icon slot="end" name="checkmark-circle-outline"></ion-icon>
     </ion-button>
   </form>
 </ion-content>
