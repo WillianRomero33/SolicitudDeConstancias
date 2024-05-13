@@ -28,7 +28,6 @@
     <ion-icon slot="icon-only" name="document"></ion-icon>
     <ion-label class="ion-padding">Generar PDF</ion-label>
   </ion-button>
-
   <!-- MOSTRAR SOLICITUDES -->
   <ion-card *ngIf="loading == false">
     <ion-card-header>
@@ -40,33 +39,38 @@
       <ion-label *ngIf="!constancias.length">No existen Solicitudes de Constancias en este rango filtrado</ion-label>
       <!-- SI EXISTEN SOLICITUDES DE CONSTANCIAS CON EL FILTRO -->
       <ion-list>
-        <ion-item *ngFor="let constancia of constancias | paginate: { itemsPerPage: 8, currentPage: page }">
-          <ion-label>
-            <strong>{{constancia.name}}</strong>
-            <p>{{constancia.createdAt}}</p>
-          </ion-label>
-          <ion-label>
-            <strong>{{constancia.status ? 'Activo' : 'Inactivo'}}</strong>
-          </ion-label>
-
-          <ion-button-group slot="end" *ngIf="user.role == 'admin'">
-            <ion-button color="success" (click)="sendMail(constancia)">
+        <ion-item-sliding *ngFor="let constancia of constancias | paginate: { itemsPerPage: 5, currentPage: page }">
+          <ion-item>
+            <ion-label>
+              <strong>{{constancia.name}}</strong>
+              <p>{{constancia.createdAt}}</p>
+            </ion-label>
+            <ion-label slot="end">
+              <strong>{{constancia.status ? 'Activo' : 'Inactivo'}}</strong>
+            </ion-label>
+          </ion-item>
+          <!-- OPCIONES SOLO ADMIN -->
+          <ion-item-options *ngIf="user.role == 'admin'">
+            <!-- ENVIAR EMAIL -->
+            <ion-button *ngIf="constancia.status" color="success" (click)="sendMail(constancia)"  >
               <ion-icon name="mail"></ion-icon>
             </ion-button>
+            <!-- EDITAR CONSTANCIA -->
             <ion-button color="primary" (click)="editarConstancia('/proof/record-proof', constancia)">
               <ion-icon name="create"></ion-icon>
             </ion-button>
+            <!-- ELIMINAR CONSTANCIA -->
             <ion-button color="danger" (click)="confirmDeleteProof(constancia)">
               <ion-icon name="trash"></ion-icon>
             </ion-button>
-          </ion-button-group>
-
-        </ion-item>
+          </ion-item-options>
+        </ion-item-sliding>
       </ion-list>
-      <pagination-controls *ngIf="constancias.length > 5" class="ion-text-center" (pageChange)="page = $event"></pagination-controls>
+      <div class="ion-text-center">
+        <pagination-controls *ngIf="constancias.length > 5" (pageChange)="page = $event"></pagination-controls>
+      </div>
     </ion-card-content>
   </ion-card>
-
 
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
     <ion-fab-button (click)="registrarConstancia()">

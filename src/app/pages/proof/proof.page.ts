@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, inject } from '@angular/core';
 import { Chart } from 'chart.js/auto';
 import { UtilsService } from 'src/app/services/utils.service';
 import { Router } from '@angular/router';
@@ -17,6 +17,7 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
   selector: 'app-proof',
   templateUrl: './proof.page.html',
   styleUrls: ['./proof.page.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class ProofPage implements OnInit {
   
@@ -191,6 +192,7 @@ export class ProofPage implements OnInit {
   // REFRESCAR GRAFICO Y SOLICITUDES CON FILTRO DE MES Y AÑO
   filterGraphic() {
     this.graficoConstancias.destroy()
+    this.page = 1
     this.getFilteredProofs()
     this.getLabel()
     this.cargarGrafico()    
@@ -252,6 +254,7 @@ export class ProofPage implements OnInit {
       })
     }).finally(() => {
       loading.dismiss()
+      this.graficoConstancias.destroy()
       this.getConstancias()
     })
   }
