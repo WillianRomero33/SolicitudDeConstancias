@@ -10,6 +10,7 @@ import { User } from 'src/app/models/user.model';
 // PDF
 import * as pdfMake from "pdfmake/build/pdfmake";
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import { EmailComposer } from '@awesome-cordova-plugins/email-composer/ngx';
 
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
 
@@ -21,6 +22,7 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 })
 export class ProofPage implements OnInit {
   
+  emailComposer = inject(EmailComposer)
   user: User
   loading: boolean = false
   pdfObj: any
@@ -72,7 +74,7 @@ export class ProofPage implements OnInit {
   getConstancias() {
     this.loading = true
     let path = `proofs`
-    let query = [orderBy('createdAt', 'asc')]
+    let query = [orderBy('createdHour', 'desc')]
 
     let sub = this.firebaseSvc.getCollectionData(path, query).subscribe((data: any) => {
       this.proofs = data
@@ -199,8 +201,30 @@ export class ProofPage implements OnInit {
   }
 
   // ENVIAR CORREO
-  sendMail(constancia: Proof) {
+  async sendMail(constancia: Proof) {
+    let email = {
+      to: constancia.email,
+      cc: '',
+      bcc: [],
+      attachments: [],
+      subject: 'Constancia lista',
+      body: `Le informamos que su constancias de ${constancia.type} ya esta lista`,
+      isHtml: false
+    }
+    // URL personalizada de Gmail con los parámetros del correo electrónico
+    let gmailUrl = 'https://mail.google.com/mail/?view=cm&fs=1&to=' + email.to + '&su=' + encodeURIComponent(email.subject) + '&body=' + encodeURIComponent(email.body);
 
+    const loading = await this.utilsSvc.loading()
+    await loading.present()
+
+    this.emailComposer.open(email).then(() => {
+      console.log("Correo Enviado")
+    }).catch((error) => {
+      console.error("Ha ocurrido un error", error)
+      window.open(gmailUrl, '_blank');
+    }).finally(() => {
+      loading.dismiss()
+    })
   }
 
   // ROUTER LINK 

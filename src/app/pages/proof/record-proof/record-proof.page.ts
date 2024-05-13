@@ -30,7 +30,8 @@ export class RecordProofPage implements OnInit {
     description: new FormControl('', [Validators.required, Validators.minLength(5)]),
     qty: new FormControl<number | null>(null, [Validators.required, Validators.min(1)]),
     status: new FormControl(false, [Validators.required]),
-    createdAt: new FormControl('')
+    createdAt: new FormControl(''),
+    createdHour: new FormControl<number>(0)
   });
 
   ngOnInit() {
@@ -59,7 +60,10 @@ export class RecordProofPage implements OnInit {
 
     let currentDate = new Date()
     let createdAt = `${currentDate.getFullYear()}/${currentDate.getMonth()+1}/${currentDate.getDate()}`
+    let createdHour = currentDate.getTime()
+
     this.form.controls.createdAt.setValue(createdAt)
+    this.form.controls.createdHour.setValue(createdHour)
     delete this.form.value.id
 
     this.firebaseSvc.addDocument(path, this.form.value).then(async res => {

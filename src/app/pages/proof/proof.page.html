@@ -43,10 +43,14 @@
           <ion-item>
             <ion-label>
               <strong>{{constancia.name}}</strong>
-              <p>{{constancia.createdAt}}</p>
+              {{constancia.email}}
+              <p>{{constancia.phone}}</p>
+            </ion-label>
+            <ion-label>
+              <strong>{{constancia.status ? 'Activo' : 'Inactivo'}}</strong>
             </ion-label>
             <ion-label slot="end">
-              <strong>{{constancia.status ? 'Activo' : 'Inactivo'}}</strong>
+              {{constancia.createdAt}}
             </ion-label>
           </ion-item>
           <!-- OPCIONES SOLO ADMIN -->

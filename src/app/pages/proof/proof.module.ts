@@ -10,6 +10,7 @@ import { ProofPage } from './proof.page';
 import { SharedModule } from 'src/app/shared/shared.module';
 
 import { NgxPaginationModule } from "ngx-pagination";
+import { EmailComposer } from '@awesome-cordova-plugins/email-composer/ngx';
 
 @NgModule({
   imports: [
@@ -20,6 +21,7 @@ import { NgxPaginationModule } from "ngx-pagination";
     SharedModule,
     NgxPaginationModule,
   ],
+  providers: [EmailComposer],
   declarations: [ProofPage],
 })
 export class ProofPageModule {}

@@ -13,6 +13,7 @@ export class CustomInputComponent  implements OnInit {
   @Input() icon!: string
   @Input() label!: string
   @Input() autocomplete!: string
+  @Input() placeholder!: string
 
   isPassword!: boolean;
   hide: boolean = true;
@@ -21,10 +22,6 @@ export class CustomInputComponent  implements OnInit {
 
   ngOnInit() {
     if (this.type == 'password') this.isPassword = this.isPassword = true;
-    //   console.log('Type:', this.type);
-    //   console.log('Autocomplete:', this.autocomplete);
-    //   console.log('Label:', this.label);
-    //   console.log('Control:', this.control);
     }
       showOrHidePassword(){
         this.hide = !this.hide;
