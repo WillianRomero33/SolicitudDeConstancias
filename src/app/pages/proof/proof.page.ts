@@ -6,9 +6,13 @@ import { FirebaseService } from 'src/app/services/firebase.service';
 import { orderBy } from 'firebase/firestore';
 import { FormControl, FormGroup } from '@angular/forms';
 import { User } from 'src/app/models/user.model';
+import { Platform } from '@ionic/angular';
 // PDF
+import { FileOpener } from "@awesome-cordova-plugins/file-opener";
+import { File } from "@awesome-cordova-plugins/file";
 import * as pdfMake from "pdfmake/build/pdfmake";
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+// EMAIL
 import { EmailComposer } from '@awesome-cordova-plugins/email-composer/ngx';
 
 (<any>pdfMake).vfs = pdfFonts.pdfMake.vfs;
@@ -21,7 +25,6 @@ import { EmailComposer } from '@awesome-cordova-plugins/email-composer/ngx';
 })
 export class ProofPage implements OnInit {
   
-  emailComposer = inject(EmailComposer)
   user: User
   loading: boolean = false
   pdfObj: any
@@ -29,6 +32,8 @@ export class ProofPage implements OnInit {
   constructor(
     private utilsSvc: UtilsService,
     private firebaseSvc: FirebaseService,
+    private emailComposer: EmailComposer,
+    private platform: Platform
   ) {
     this.user = this.utilsSvc.getFromLocalStorage('user')
     for (let year = this.currentDate.getFullYear(); year >= this.minYear; year--) {
