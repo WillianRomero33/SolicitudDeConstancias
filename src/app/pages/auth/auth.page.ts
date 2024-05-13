@@ -92,7 +92,7 @@ export class AuthPage {
 
     this.firebaseSvc.getDocument(path).then((user: User) => {
       this.utilsSvc.setInLocalStorage('user', user)
-      this.utilsSvc.routerLink('/proof')
+      this.utilsSvc.routerLink('/proof', true)
 
       this.utilsSvc.presentToast({
         message: `Te damos la bienvenida ${user.name}`,

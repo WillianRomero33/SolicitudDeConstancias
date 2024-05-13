@@ -67,7 +67,7 @@ export class RecordProofPage implements OnInit {
     delete this.form.value.id
 
     this.firebaseSvc.addDocument(path, this.form.value).then(async res => {
-      this.utilsSvc.routerLink("/proof")
+      this.utilsSvc.routerLink("/proof", false)
       this.utilsSvc.presentToast({
         message: "Constancia agregada exitosamente",
         duration: 1500,
@@ -98,7 +98,7 @@ export class RecordProofPage implements OnInit {
     delete this.form.value.id
 
     this.firebaseSvc.updateDocument(path, this.form.value).then(async res => {
-      this.utilsSvc.routerLink("/proof")
+      this.utilsSvc.routerLink("/proof", false)
       this.utilsSvc.presentToast({
         message: "Constancia actualizada exitosamente",
         duration: 1500,

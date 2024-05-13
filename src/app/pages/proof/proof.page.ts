@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewEncapsulation, inject } from '@angular/core';
 import { Chart } from 'chart.js/auto';
 import { UtilsService } from 'src/app/services/utils.service';
-import { Router } from '@angular/router';
 import { Proof } from 'src/app/models/proof.model';
 import { FirebaseService } from 'src/app/services/firebase.service';
 import { orderBy } from 'firebase/firestore';
@@ -30,7 +29,6 @@ export class ProofPage implements OnInit {
   constructor(
     private utilsSvc: UtilsService,
     private firebaseSvc: FirebaseService,
-    private router: Router,
   ) {
     this.user = this.utilsSvc.getFromLocalStorage('user')
     for (let year = this.currentDate.getFullYear(); year >= this.minYear; year--) {
@@ -227,10 +225,10 @@ export class ProofPage implements OnInit {
     })
   }
 
-  // ROUTER LINK 
+  // EDITAR CONSTANCIA
   editarConstancia(url: string, proof: Proof) {
     this.utilsSvc.setData(proof as Proof)
-    this.utilsSvc.routerLink(url)
+    this.utilsSvc.routerLink(url, false)
   }
 
   // -------- ELIMINACION DE UNA CONTANCIA --------
@@ -283,10 +281,6 @@ export class ProofPage implements OnInit {
     })
   }
 
-  registrarConstancia() {
-    this.router.navigateByUrl('/proof/record-proof');
-  }
-
   // ================== PDF ===============
 
   async createPdf() {
@@ -306,7 +300,7 @@ export class ProofPage implements OnInit {
       }
       
       let docObj = this.getPdfDefinition(content)
-      this.pdfObj = pdfMake.createPdf(docObj).open()
+      this.pdfObj = pdfMake.createPdf(docObj).download()
     } catch (error) {
       console.log(error)
     }

@@ -43,14 +43,12 @@
           <ion-item>
             <ion-label>
               <strong>{{constancia.name}}</strong>
-              {{constancia.email}}
-              <p>{{constancia.phone}}</p>
-            </ion-label>
-            <ion-label>
-              <strong>{{constancia.status ? 'Activo' : 'Inactivo'}}</strong>
+              <p>{{constancia.email}}</p>
+              <p>Tel: {{constancia.phone}}</p>
             </ion-label>
             <ion-label slot="end">
-              {{constancia.createdAt}}
+              <strong>{{constancia.status ? 'Activo' : 'Inactivo'}}</strong>
+              <p>{{constancia.createdAt}}</p>
             </ion-label>
           </ion-item>
           <!-- OPCIONES SOLO ADMIN -->
@@ -77,7 +75,7 @@
   </ion-card>
 
   <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button (click)="registrarConstancia()">
+    <ion-fab-button routerLink="record-proof">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
