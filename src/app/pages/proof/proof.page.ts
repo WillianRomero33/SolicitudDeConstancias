@@ -223,7 +223,6 @@ export class ProofPage implements OnInit {
     this.emailComposer.open(email).then(() => {
       console.log("Correo Enviado")
     }).catch((error) => {
-      console.error("Ha ocurrido un error", error)
       window.open(gmailUrl, '_blank');
     }).finally(() => {
       loading.dismiss()

@@ -71,9 +71,9 @@ export class AuthPage {
     this.firebaseSvc.signIn(this.form.value as User).then(async res => {
       this.getUserInfo(res.user.uid)
     }).catch(error => {
-      console.error(error)
+      let errorMessage = this.utilsSvc.getErrorMessage(error.code)
       this.utilsSvc.presentToast({
-        message: error.message,
+        message: errorMessage,
         duration: 2500,
         icon: 'alert-circle-outline',
         color: 'danger',
@@ -103,7 +103,6 @@ export class AuthPage {
       })
 
     }).catch(error => {
-      console.log(error)
       this.utilsSvc.presentToast({
         message: error.message,
         duration: 2500,
